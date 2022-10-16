@@ -1,5 +1,5 @@
 from .spending_functions import SpendingFunction, LinearSpendingFunction
-from ._clustering import _get_cluster_stats
+from ._clustering import _get_cluster_stats_samples
 from mne.utils import check_random_state
 from mne.parallel import parallel_func
 from collections import OrderedDict
@@ -59,7 +59,7 @@ def generate_permutation_dist(X, labels,
                             n_permutations = 1024,
                             seed = None,
                             n_jobs = 1,
-                            statistic = _get_cluster_stats,
+                            statistic = _get_cluster_stats_samples,
                             **statistic_kwargs):
     '''
     computes test statistic and its permutation distribution at each look time

@@ -7,9 +7,11 @@ from mne.stats.cluster_level import (
     _get_partitions_from_adjacency,
     _validate_type,
     _find_clusters,
-    _reshape_clusters
+    _reshape_clusters,
+    _pval_from_histogram
 )
 from mne.utils import _check_option
+from collections import OrderedDict
 import numpy as np
 
 def _check_fun(X, stat_fun, threshold, tail = 0, kind = 'within'):
@@ -56,30 +58,10 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     mostly copied from mne.stats.cluster_level._permutation_cluster_test, but
     it doesn't perform a full permutation test, just gets the observed stats
     '''
-
-    ##  check inputs
-    # -------------------------
-    assert(isinstance(X, list))
-    if len(X) > 1: # independent-samples
-        stat_fun, threshold = _check_fun(X, stat_fun, threshold, tail, 'between')
-    elif len(X) == 1: # one-sample
-        stat_fun, threshold = _check_fun(X[0], stat_fun, threshold, tail)
-
-    _check_option('out_type', out_type, ['mask', 'indices'])
-    _check_option('tail', tail, [-1, 0, 1])
-    if not isinstance(threshold, dict):
-        threshold = float(threshold)
-        if (tail < 0 and threshold > 0 or tail > 0 and threshold < 0 or
-                tail == 0 and threshold < 0):
-            raise ValueError('incompatible tail and threshold signs, got '
-                             '%s and %s' % (tail, threshold))
-
-    # check dimensions for each group in X (a list at this stage).
-    X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
     n_samples = X[0].shape[0]
     n_times = X[0].shape[1]
-
     sample_shape = X[0].shape[1:]
+
     for x in X:
         if x.shape[1:] != sample_shape:
             raise ValueError('All samples mush have the same size')
@@ -158,3 +140,70 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     if len(clusters) == 0: # handle case in which no clusters are found
         cluster_stats = np.array([0])
     return t_obs, clusters, cluster_stats
+
+
+def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
+        tail = 0, stat_fun = None, adjacency = None, ax_step = 1,
+        exclude = None, step_down_p = 0, t_power = 1,
+        out_type = 'mask', check_disjoint = False, buffer_size = 1000):
+    '''
+    Computes cluster stats when design is one-sample or independent samples
+    '''
+    ##  check inputs
+    # -------------------------
+    assert(isinstance(X, list))
+    if len(X) > 1: # independent-samples
+        stat_fun, threshold = _check_fun(X, stat_fun, threshold, tail, 'between')
+    elif len(X) == 1: # one-sample
+        stat_fun, threshold = _check_fun(X[0], stat_fun, threshold, tail)
+
+    _check_option('out_type', out_type, ['mask', 'indices'])
+    _check_option('tail', tail, [-1, 0, 1])
+    if not isinstance(threshold, dict):
+        threshold = float(threshold)
+        if (tail < 0 and threshold > 0 or tail > 0 and threshold < 0 or
+                tail == 0 and threshold < 0):
+            raise ValueError('incompatible tail and threshold signs, got '
+                             '%s and %s' % (tail, threshold))
+
+    # check dimensions for each group in X (a list at this stage).
+    X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
+
+    return _get_cluster_stats(X, threshold, max_step,
+            tail, stat_fun, adjacency, ax_step,
+            exclude , step_down_p, t_power,
+            out_type, check_disjoint, buffer_size)
+            
+
+def _get_cluster_pvs(obs_stats, H0, tail):
+    '''
+    computes cluster p-values at each look time by comparing observed clusters
+    to permutation distribution
+
+    Inputs
+    --------
+    obs_stats: (dict) of tuples of (t_obs, clusters, cluster_stats)
+                indexed by look time
+    H0: (np.ndarray) joint null distribution of cluster stats across look times
+    tail: (int) sidedness of test to compute p-value for
+
+    Returns
+    --------
+    stats: (dict of tuples) indexed by look time, this dict contains output
+            matching that of MNE's cluster-based permutation test for that
+            look time (i.e. t_obs, clusters, cluster_ps, H0)
+    p_values: (np.ndarray) smallest p-value at each look time
+    '''
+    obs = OrderedDict()
+    min_ps = [] # minimum at each look time
+    for i, n in enumerate(obs_stats):
+        t_obs, clusters, cluster_stats = obs_stats[n]
+        h0 = H0[:, i]
+        if len(clusters) > 0:
+            cluster_pv = _pval_from_histogram(cluster_stats, h0, tail)
+            min_ps.append(np.min(cluster_pv))
+        else:
+            cluster_pv = np.array([])
+            min_ps.append(1.) # no clusters
+        obs[n] = (t_obs, clusters, cluster_pv, h0)
+    return obs, np.array(min_ps)
