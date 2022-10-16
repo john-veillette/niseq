@@ -62,10 +62,6 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     n_times = X[0].shape[1]
     sample_shape = X[0].shape[1:]
 
-    for x in X:
-        if x.shape[1:] != sample_shape:
-            raise ValueError('All samples mush have the same size')
-
     # flatten the last dimensions in case the data is high dimensional
     X = [np.reshape(x, (x.shape[0], -1)) for x in X]
     n_tests = X[0].shape[1]
@@ -168,12 +164,16 @@ def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
 
     # check dimensions for each group in X (a list at this stage).
     X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
+    sample_shape = X[0].shape[1:]
+    for x in X:
+        if x.shape[1:] != sample_shape:
+            raise ValueError('All samples mush have the same size')
 
     return _get_cluster_stats(X, threshold, max_step,
             tail, stat_fun, adjacency, ax_step,
             exclude , step_down_p, t_power,
             out_type, check_disjoint, buffer_size)
-            
+
 
 def _get_cluster_pvs(obs_stats, H0, tail):
     '''
