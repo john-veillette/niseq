@@ -10,8 +10,9 @@ from mne.stats.cluster_level import (
     _reshape_clusters,
     _pval_from_histogram
 )
-from mne.utils import _check_option
+from mne.utils import _check_option, warn
 from collections import OrderedDict
+from scipy.stats import beta
 import numpy as np
 
 def _check_fun(X, stat_fun, threshold, tail = 0, kind = 'within'):
@@ -62,6 +63,15 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     n_times = X[0].shape[1]
     sample_shape = X[0].shape[1:]
 
+    _check_option('out_type', out_type, ['mask', 'indices'])
+    _check_option('tail', tail, [-1, 0, 1])
+    if not isinstance(threshold, dict):
+        threshold = float(threshold)
+        if (tail < 0 and threshold > 0 or tail > 0 and threshold < 0 or
+                tail == 0 and threshold < 0):
+            raise ValueError('incompatible tail and threshold signs, got '
+                             '%s and %s' % (tail, threshold))
+
     # flatten the last dimensions in case the data is high dimensional
     X = [np.reshape(x, (x.shape[0], -1)) for x in X]
     n_tests = X[0].shape[1]
@@ -74,18 +84,6 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
 
     t_obs = stat_fun(*X)
     _validate_type(t_obs, np.ndarray, 'return value of stat_fun')
-
-    # test if stat_fun treats variables independently
-    if buffer_size is not None:
-        t_obs_buffer = np.zeros_like(t_obs)
-        for pos in range(0, n_tests, buffer_size):
-            t_obs_buffer[pos: pos + buffer_size] =\
-                stat_fun(*[x[:, pos: pos + buffer_size] for x in X])
-
-        if not np.alltrue(t_obs == t_obs_buffer):
-            warn('Provided stat_fun does not treat variables independently. '
-                 'Setting buffer_size to None.')
-            buffer_size = None
 
     ## Compute mass-univariate test stat
     #--------------------------------------
@@ -153,15 +151,6 @@ def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
     elif len(X) == 1: # one-sample
         stat_fun, threshold = _check_fun(X[0], stat_fun, threshold, tail)
 
-    _check_option('out_type', out_type, ['mask', 'indices'])
-    _check_option('tail', tail, [-1, 0, 1])
-    if not isinstance(threshold, dict):
-        threshold = float(threshold)
-        if (tail < 0 and threshold > 0 or tail > 0 and threshold < 0 or
-                tail == 0 and threshold < 0):
-            raise ValueError('incompatible tail and threshold signs, got '
-                             '%s and %s' % (tail, threshold))
-
     # check dimensions for each group in X (a list at this stage).
     X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
     sample_shape = X[0].shape[1:]
@@ -170,6 +159,68 @@ def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
             raise ValueError('All samples mush have the same size')
 
     return _get_cluster_stats(X, threshold, max_step,
+            tail, stat_fun, adjacency, ax_step,
+            exclude , step_down_p, t_power,
+            out_type, check_disjoint, buffer_size)
+
+def _correlation_stat_fun(X, y):
+    '''
+    computes correlation coefficients in vectorized manner for a substantial
+    speedup vs. using scipy's implementation applied across axis
+
+    Inputs
+    -------
+    X: an (n, num_tests) np.ndarray
+    y: an (n, 1) np.ndarray
+
+    Returns
+    -------
+    r: a (num_tests,) long array or pearson's correlation coefficients
+    '''
+    Xm = np.mean(X,axis = 0)[np.newaxis, :]
+    ym = np.mean(y)
+    r_num = np.sum((X - Xm) * (y - ym), axis = 0)
+    r_den = np.sqrt(np.sum((X - Xm)**2, axis = 0) * np.sum((y - ym)**2))
+    r = r_num / r_den
+    return r
+
+def _correlation_stat_fun_tfce(X, y):
+    r = _correlation_stat_fun(X, y)
+    z = np.arctanh(r) # Fisher z-transform
+    return z
+
+def _check_fun_correlation(X, stat_fun, threshold, tail):
+    n = X.shape[0]
+    if stat_fun is None:
+        if isinstance(threshold, dict): # use z-transformed correlations
+            stat_fun = _correlation_stat_fun_tfce
+        else:
+            stat_fun = _correlation_stat_fun
+            if threshold is None:
+                # default to r value where p < 0.05
+                alpha = .05
+                dist = beta(n/2 - 1, n/2 - 1, loc = -1, scale = 2)
+                if tail == 0:
+                    threshold = -dist.ppf(alpha / 2)
+                elif tail == 1:
+                    threshold = -dist.ppf(alpha)
+                elif tail == -1:
+                    threshold = dist.ppf(alpha)
+    else:
+        assert(threshold is not None) # if stat_fun given, must define threshold
+    return stat_fun, threshold
+
+def _get_cluster_stats_correlation(X, y, threshold = None, max_step = 1,
+        tail = 0, stat_fun = None, adjacency = None, ax_step = 1,
+        exclude = None, step_down_p = 0, t_power = 1,
+        out_type = 'mask', check_disjoint = False, buffer_size = 1000):
+    '''
+    Computes cluster stats when y is a regression outcome variable
+    '''
+    assert(isinstance(X, np.ndarray) and isinstance(y, np.ndarray))
+    assert(y.ndim == 1)
+    stat_fun, threshold = _check_fun_correlation(X, stat_fun, threshold, tail)
+    return _get_cluster_stats([X, y], threshold, max_step,
             tail, stat_fun, adjacency, ax_step,
             exclude , step_down_p, t_power,
             out_type, check_disjoint, buffer_size)

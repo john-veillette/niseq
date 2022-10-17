@@ -1,5 +1,5 @@
+from ._clustering import _get_cluster_stats_samples, _get_cluster_stats_correlation
 from .spending_functions import SpendingFunction, LinearSpendingFunction
-from ._clustering import _get_cluster_stats_samples
 from mne.utils import check_random_state
 from mne.parallel import parallel_func
 from collections import OrderedDict
@@ -15,11 +15,15 @@ def _get_stat_at_look_times(X, labels, look_times, statistic, statistic_kwargs):
         _X = X[:n]
         if labels is None: # one-sample test
             _X = [_X]
+            obs[n] = statistic(_X, **statistic_kwargs)
+        elif statistic is _get_cluster_stats_correlation: # correlation test
+            _y = labels[:n]
+            obs[n] = statistic(_X, _y, **statistic_kwargs)
         else: # independent-samples test
             _labels = labels[:n]
             conds = np.unique(_labels)
             _X = [_X[_labels == cond] for cond in conds]
-        obs[n] = statistic(_X, **statistic_kwargs)
+            obs[n] = statistic(_X, **statistic_kwargs)
 
     return obs
 
