@@ -40,11 +40,18 @@ def _get_stat_perm(X, labels, look_times, seed, statistic, statistic_kwargs):
             flips = flips[:, np.newaxis]
         _X = X * flips
         _labels = None
-    else: # independent-sample, permute by shuffle
+    else: # independent-sample, permute by shuffling labels:
+        # but only shuffle within each period between look times,
+        # so p-values at each look time will be approximately preserved
+        # across multiple, sequential uses of the test
         idxs = np.arange(X.shape[0])
-        rng.shuffle(idxs)
-        _X = X[idxs]
-        _labels = labels
+        _lt = [0] + list(look_times)
+        starts = [_lt[i] for i in range(len(look_times))]
+        ends = [_lt[i + 1] for i in range(len(look_times))]
+        for s, e in zip(starts, ends):
+            rng.shuffle(idxs[s:e])
+        _X = X
+        _labels = labels[idxs]
     stats = _get_stat_at_look_times(
         _X, _labels,
         look_times,
