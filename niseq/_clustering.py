@@ -110,7 +110,7 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     out = _find_clusters(t_obs, threshold, tail, adjacency,
                          max_step = max_step, include = include,
                          partitions = partitions, t_power = t_power,
-                         show_info = True)
+                         show_info = False)
     clusters, cluster_stats = out
 
     # The stat should have the same shape as the samples
@@ -133,7 +133,19 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     clusters = _reshape_clusters(clusters, sample_shape)
     if len(clusters) == 0: # handle case in which no clusters are found
         cluster_stats = np.array([0])
-    return t_obs, clusters, cluster_stats
+    if tail == 0:
+        max_stat = np.max(np.abs(cluster_stats))
+    elif tail == 1:
+        if isinstance(threshold, dict):
+            max_stat = np.max(t_obs)
+        else:
+            max_stat = np.max(cluster_stats)
+    elif tail == -1:
+        if isinstance(threshold, dict):
+            max_stat = np.min(t_obs)
+        else:
+            max_stat = np.min(cluster_stats)
+    return t_obs, clusters, cluster_stats, max_stat
 
 
 def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
@@ -248,7 +260,7 @@ def _get_cluster_pvs(obs_stats, H0, tail):
     obs = OrderedDict()
     min_ps = [] # minimum at each look time
     for i, n in enumerate(obs_stats):
-        t_obs, clusters, cluster_stats = obs_stats[n]
+        t_obs, clusters, cluster_stats, _ = obs_stats[n]
         h0 = H0[:, i]
         if len(clusters) > 0:
             cluster_pv = _pval_from_histogram(cluster_stats, h0, tail)

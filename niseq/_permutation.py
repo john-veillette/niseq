@@ -58,8 +58,8 @@ def _get_stat_perm(X, labels, look_times, seed, statistic, statistic_kwargs):
         statistic, statistic_kwargs
     )
     H0 = [stats[n] for n in look_times]
-    if isinstance(H0[0], tuple): # if statistic() returns multiple values,
-        H0 = [np.max(h0[-1]) for h0 in H0] # then test stats should be last
+    if isinstance(H0[0], tuple):
+        H0 = [h0[-1] for h0 in H0]
     H0 = np.array(H0)
     assert(H0.ndim == 1)
     return H0
@@ -85,8 +85,8 @@ def generate_permutation_dist(X, labels,
         statistic, statistic_kwargs
     )
     obs_stats = [obs[n] for n in look_times]
-    if isinstance(obs_stats[0], tuple):
-        obs_stats = [np.max(s[-1]) for s in obs_stats]
+    if isinstance(obs_stats[0], tuple): # test stat should be last
+        obs_stats = [s[-1] for s in obs_stats]
     obs_stats = np.array(obs_stats)
 
     parallel, p_func, n_jobs = parallel_func(_get_stat_perm, n_jobs)
