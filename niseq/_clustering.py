@@ -119,6 +119,7 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     # For TFCE, return the "adjusted" statistic instead of raw scores
     if isinstance(threshold, dict):
         t_obs = cluster_stats.reshape(t_obs.shape) * np.sign(t_obs)
+        cluster_stats = t_obs.reshape(cluster_stats.shape)
 
     # convert clusters to old format
     if adjacency is not None and adjacency is not False:
@@ -136,15 +137,9 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     if tail == 0:
         max_stat = np.max(np.abs(cluster_stats))
     elif tail == 1:
-        if isinstance(threshold, dict):
-            max_stat = np.max(t_obs)
-        else:
-            max_stat = np.max(cluster_stats)
+        max_stat = np.max(cluster_stats)
     elif tail == -1:
-        if isinstance(threshold, dict):
-            max_stat = np.min(t_obs)
-        else:
-            max_stat = np.min(cluster_stats)
+        max_stat = np.min(cluster_stats)
     return t_obs, clusters, cluster_stats, max_stat
 
 
@@ -238,7 +233,7 @@ def _get_cluster_stats_correlation(X, y, threshold = None, max_step = 1,
             out_type, check_disjoint, buffer_size)
 
 
-def _get_cluster_pvs(obs_stats, H0, tail):
+def _get_cluster_pvs(obs_stats, H0, tail, tfce = False):
     '''
     computes cluster p-values at each look time by comparing observed clusters
     to permutation distribution
