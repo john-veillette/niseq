@@ -182,7 +182,7 @@ def _correlation_stat_fun(X, y):
 
     Returns
     -------
-    r: a (num_tests,) long array or pearson's correlation coefficients
+    r: a (num_tests,) array of pearson's correlation coefficients
     '''
     Xm = np.mean(X,axis = 0)[np.newaxis, :]
     ym = np.mean(y)
