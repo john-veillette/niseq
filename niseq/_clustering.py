@@ -50,9 +50,9 @@ def _check_fun(X, stat_fun, threshold, tail = 0, kind = 'within'):
     return stat_fun, threshold
 
 def _get_cluster_stats(X, threshold = None, max_step = 1,
-        tail = 0, stat_fun = None, adjacency = None, ax_step = 1,
-        exclude = None, step_down_p = 0, t_power = 1,
-        out_type = 'mask', check_disjoint = False, buffer_size = 1000):
+        tail = 0, stat_fun = None, adjacency = None,
+        exclude = None, t_power = 1,
+        out_type = 'mask', check_disjoint = False):
     '''
     An auxilliary function to compute cluster statistics from observed data or
     from a single permutation
@@ -145,9 +145,9 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
 
 
 def _get_cluster_stats_samples(X, labels = None, threshold = None, max_step = 1,
-        tail = 0, stat_fun = None, adjacency = None, ax_step = 1,
-        exclude = None, step_down_p = 0, t_power = 1,
-        out_type = 'mask', check_disjoint = False, buffer_size = 1000):
+        tail = 0, stat_fun = None, adjacency = None,
+        exclude = None, t_power = 1,
+        out_type = 'mask', check_disjoint = False):
     '''
     Computes cluster stats when design is one-sample or independent samples
     '''
@@ -170,9 +170,9 @@ def _get_cluster_stats_samples(X, labels = None, threshold = None, max_step = 1,
             raise ValueError('All samples mush have the same size')
 
     return _get_cluster_stats(X, threshold, max_step,
-            tail, stat_fun, adjacency, ax_step,
-            exclude , step_down_p, t_power,
-            out_type, check_disjoint, buffer_size)
+            tail, stat_fun, adjacency,
+            exclude , t_power,
+            out_type, check_disjoint)
 
 
 def _correlation_stat_fun_tfce(X, y):
@@ -202,9 +202,9 @@ def _check_fun_correlation(X, stat_fun, threshold, tail):
     return stat_fun, threshold
 
 def _get_cluster_stats_correlation(X, y, threshold = None, max_step = 1,
-        tail = 0, stat_fun = None, adjacency = None, ax_step = 1,
-        exclude = None, step_down_p = 0, t_power = 1,
-        out_type = 'mask', check_disjoint = False, buffer_size = 1000):
+        tail = 0, stat_fun = None, adjacency = None,
+        exclude = None, t_power = 1,
+        out_type = 'mask', check_disjoint = False):
     '''
     Computes cluster stats when y is a regression outcome variable
     '''
@@ -212,9 +212,9 @@ def _get_cluster_stats_correlation(X, y, threshold = None, max_step = 1,
     assert(y.ndim == 1)
     stat_fun, threshold = _check_fun_correlation(X, stat_fun, threshold, tail)
     return _get_cluster_stats([X, y], threshold, max_step,
-            tail, stat_fun, adjacency, ax_step,
-            exclude , step_down_p, t_power,
-            out_type, check_disjoint, buffer_size)
+            tail, stat_fun, adjacency,
+            exclude , t_power,
+            out_type, check_disjoint)
 
 
 def _get_cluster_pvs(obs_stats, H0, tail, tfce = False):
