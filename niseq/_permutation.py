@@ -12,18 +12,14 @@ def _get_stat_at_look_times(X, labels, look_times, statistic, statistic_kwargs):
     obs = OrderedDict()
 
     for i, n in enumerate(look_times):
+
         _X = X[:n]
+
         if labels is None: # one-sample test
-            _X = [_X]
             obs[n] = statistic(_X, **statistic_kwargs)
-        elif statistic is _get_cluster_stats_correlation: # correlation test
-            _y = labels[:n]
-            obs[n] = statistic(_X, _y, **statistic_kwargs)
         else: # independent-samples test
             _labels = labels[:n]
-            conds = np.unique(_labels)
-            _X = [_X[_labels == cond] for cond in conds]
-            obs[n] = statistic(_X, **statistic_kwargs)
+            obs[n] = statistic(_X, _labels, **statistic_kwargs)
 
     return obs
 
@@ -112,21 +108,44 @@ def _quantile(x, q, method):
     except:
         return np.quantile(x, q, interpolation = method)
 
+def _throw_spending_func_warning():
+    '''
+    raised when user spending function doesn't match specified alpha and n_max
+    '''
+    import warnings
+    warnings.warn(
+        '''
+        User input spending_func doesn't match `alpha` and `n_max` arguments!
+        `alpha` and `n_max` have been overridden by those of `spending_func`.
+        '''
+    )
 
 def find_thresholds(
     H0, look_times, max_n,
     alpha = 0.05, tail = 0,
-    spending_function = LinearSpendingFunction
+    spending_func = None
     ):
     '''
     Given a permutation null distribution for a corresponding sequence of look
     times and an alpha spending function, computes the adjusted significance
     thresholds requires to control the false positive rate across all looks.
     '''
+    # check spending function
+    if spending_func is None:
+        spending_func = LinearSpendingFunction(alpha, max_n)
+    else:
+        assert(isinstance(spending_func, SpendingFunction))
+        try:
+            assert(spending_func.alpha == alpha)
+            assert(spending_func.max_n == max_n)
+        except:
+            alpha = spending_func.alpha
+            max_n = spending_func.max_n
+            _throw_spending_func_warning()
+
     _H0 = np.copy(H0)
     spending_hist = []
     adjusted_alphas = []
-    spending_func = spending_function(alpha, max_n) # check is valid
     assert(isinstance(spending_func, SpendingFunction))
     for i, n in enumerate(look_times):
         budget = spending_func(n)

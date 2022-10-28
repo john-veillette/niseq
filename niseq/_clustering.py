@@ -11,6 +11,7 @@ from mne.stats.cluster_level import (
     _pval_from_histogram
 )
 from mne.utils import _check_option, warn
+from .util import _correlation_stat_fun
 from collections import OrderedDict
 from scipy.stats import beta
 import numpy as np
@@ -143,7 +144,7 @@ def _get_cluster_stats(X, threshold = None, max_step = 1,
     return t_obs, clusters, cluster_stats, max_stat
 
 
-def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
+def _get_cluster_stats_samples(X, labels = None, threshold = None, max_step = 1,
         tail = 0, stat_fun = None, adjacency = None, ax_step = 1,
         exclude = None, step_down_p = 0, t_power = 1,
         out_type = 'mask', check_disjoint = False, buffer_size = 1000):
@@ -152,11 +153,14 @@ def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
     '''
     ##  check inputs
     # -------------------------
-    assert(isinstance(X, list))
-    if len(X) > 1: # independent-samples
-        stat_fun, threshold = _check_fun(X, stat_fun, threshold, tail, 'between')
-    elif len(X) == 1: # one-sample
+    assert(isinstance(X, np.ndarray))
+    if labels is None:
+        X = [X]
         stat_fun, threshold = _check_fun(X[0], stat_fun, threshold, tail)
+    else:
+        conds = np.unique(labels)
+        X = [X[labels == cond] for cond in conds]
+        stat_fun, threshold = _check_fun(X, stat_fun, threshold, tail, 'between')
 
     # check dimensions for each group in X (a list at this stage).
     X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
@@ -170,26 +174,6 @@ def _get_cluster_stats_samples(X, threshold = None, max_step = 1,
             exclude , step_down_p, t_power,
             out_type, check_disjoint, buffer_size)
 
-def _correlation_stat_fun(X, y):
-    '''
-    computes correlation coefficients in vectorized manner for a substantial
-    speedup vs. using scipy's implementation applied across axis
-
-    Inputs
-    -------
-    X: an (n, num_tests) np.ndarray
-    y: an (n, 1) np.ndarray
-
-    Returns
-    -------
-    r: a (num_tests,) array of pearson's correlation coefficients
-    '''
-    Xm = np.mean(X,axis = 0)[np.newaxis, :]
-    ym = np.mean(y)
-    r_num = np.sum((X - Xm) * (y - ym), axis = 0)
-    r_den = np.sqrt(np.sum((X - Xm)**2, axis = 0) * np.sum((y - ym)**2))
-    r = r_num / r_den
-    return r
 
 def _correlation_stat_fun_tfce(X, y):
     r = _correlation_stat_fun(X, y)
