@@ -106,7 +106,9 @@ def _add_pvs_to_obs(obs_stats, H0, tail):
 
 def sequential_permutation_t_test_1samp(X,
                                         look_times, n_max,
-                                        tail = 0, **kwargs):
+                                        alpha = .05, tail = 0,
+                                        spending_func = None,
+                                        **kwargs):
     '''
     sequential generalization of mne.stats.permutations.permutation_t_test
     '''
@@ -119,14 +121,19 @@ def sequential_permutation_t_test_1samp(X,
         statfun = ttest_1samp_no_p,
         **kwargs
         )
-    spending, adj_alpha = find_thresholds(H0, look_times, n_max, tail = tail)
+    spending, adj_alpha = find_thresholds(
+        H0, look_times, n_max,
+        alpha, tail, spending_func
+        )
     obs_stats, ps = _add_pvs_to_obs(obs, H0, tail)
     return obs_stats, ps, adj_alpha, spending
 
 
 def sequential_permutation_test_indep(X, labels,
                                         look_times, n_max,
-                                        tail = 0, **kwargs):
+                                        alpha = .05, tail = 0,
+                                        spending_func = None,
+                                        **kwargs):
     '''
     sequential generalization of mne.stats.permutations.permutation_t_test
 
@@ -147,14 +154,19 @@ def sequential_permutation_test_indep(X, labels,
         statfun = sf,
         **kwargs
         )
-    spending, adj_alpha = find_thresholds(H0, look_times, n_max, tail = tail)
+    spending, adj_alpha = find_thresholds(
+        H0, look_times, n_max,
+        alpha, tail, spending_func
+        )
     obs_stats, ps = _add_pvs_to_obs(obs, H0, tail)
     return obs_stats, ps, adj_alpha, spending
 
 
 def sequential_permutation_test_corr(X, y,
                                     look_times, n_max,
-                                    tail = 0, **kwargs):
+                                    alpha = .05, tail = 0,
+                                    spending_func = None,
+                                    **kwargs):
     '''
     sequential permutation test with correlation as the univariate test statistic
     '''
@@ -168,6 +180,9 @@ def sequential_permutation_test_corr(X, y,
         statfun = _correlation_stat_fun,
         **kwargs
         )
-    spending, adj_alpha = find_thresholds(H0, look_times, n_max, tail = tail)
+    spending, adj_alpha = find_thresholds(
+        H0, look_times, n_max,
+        alpha, tail, spending_func
+        )
     obs_stats, ps = _add_pvs_to_obs(obs, H0, tail)
     return obs_stats, ps, adj_alpha, spending
