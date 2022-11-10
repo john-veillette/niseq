@@ -217,7 +217,7 @@ def _get_cluster_stats_correlation(X, y, threshold = None, max_step = 1,
             out_type, check_disjoint)
 
 
-def _get_cluster_pvs(obs_stats, H0, tail, tfce = False):
+def _get_cluster_pvs(obs_stats, H0, tail):
     '''
     computes cluster p-values at each look time by comparing observed clusters
     to permutation distribution

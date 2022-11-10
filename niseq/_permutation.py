@@ -168,4 +168,9 @@ def find_thresholds(
             _H0[perm_false_positives, :] = np.inf
         spending_hist.append(budget)
         adjusted_alphas.append(adjusted_alpha)
+    # the first adjusted alpha should always be equal to the spending function
+    # at the first look, but the empircal threshold computed here may differ
+    # numerically, especially e.g. in cases where the test statistic is discrete
+    # like for NBS, so we correct it here: 
+    adjusted_alphas[0] = spending_hist[0]
     return np.array(spending_hist), np.array(adjusted_alphas)

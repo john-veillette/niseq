@@ -17,9 +17,10 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
     obs_stats, ps = _get_cluster_pvs(obs, H0, tail = tail)
     return obs_stats, ps, adj_alpha, spending
 
-def sequential_cluster_test_indep(X, y, look_times, n_max, alpha = .05 tail = 0,
+def sequential_cluster_test_indep(X, y, look_times, n_max, alpha = .05, tail = 0,
                                     spending_func = None, **kwargs):
-    assert(isinstance(X, list) or isinstance(X, tuple))
+    assert(isinstance(X, np.ndarray))
+    assert(isinstance(X, np.ndarray))
     obs, H0 = generate_permutation_dist(X, y, look_times, tail = tail, **kwargs)
     spending, adj_alpha = find_thresholds(
         H0, look_times, n_max,
