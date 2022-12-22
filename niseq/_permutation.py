@@ -73,7 +73,7 @@ def generate_permutation_dist(X, labels,
     '''
     # pick new random seeds to use for each permutation
     rng = check_random_state(seed)
-    perm_seeds = rng.randint(0, n_permutations * 1000, n_permutations)
+    perm_seeds = rng.randint(1, np.iinfo(np.int32).max - 1, n_permutations)
 
     obs = _get_stat_at_look_times(
         X, labels,
@@ -171,6 +171,6 @@ def find_thresholds(
     # the first adjusted alpha should always be equal to the spending function
     # at the first look, but the empircal threshold computed here may differ
     # numerically, especially e.g. in cases where the test statistic is discrete
-    # like for NBS, so we correct it here: 
+    # like for NBS, so we correct it here:
     adjusted_alphas[0] = spending_hist[0]
     return np.array(spending_hist), np.array(adjusted_alphas)
