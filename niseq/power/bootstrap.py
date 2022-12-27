@@ -34,7 +34,7 @@ def _boot_stat(x, statistic, n_resample, conditional = False, seed = 0, **kwargs
     else:
         x_boot = _boot_sample(x, n_resample, seed)
         _x = x_boot
-    kwargs['seed'] = seed 
+    kwargs['seed'] = seed
     return statistic(_x, **kwargs)
 
 def _bootstrap(x, statistic, n_resample, n_simulations,
@@ -53,6 +53,24 @@ def _bootstrap(x, statistic, n_resample, n_simulations,
     )
     return np.stack(out)
 
+_cumulative_power = lambda rejs: (np.cumsum(rejs, axis = 1) > 0).mean(0)
+
+def _prob_rejection(rejs):
+    assert(rejs.ndim == 2)
+    first_rejs = np.zeros_like(rejs)
+    for row in range(rejs.shape[0]):
+        idxs = np.where(rejs[row, :])[0]
+        if idxs.size > 0:
+            idx = np.min(idxs)
+            first_rejs[row, idx] = 1
+    return first_rejs.mean(0)
+
+def _expected_sample_size(rejs, look_times):
+    idxs = [np.where(r)[0] for r in rejs]
+    idxs = [np.min(i) if i.size > 0 else rejs.shape[1] - 1 for i in idxs]
+    ns = [look_times[i] for i in idxs]
+    return np.mean(ns)
+
 def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
                 conditional = False, n_simulations = 1024, seed = 0,
                 n_jobs = 1, **test_func_kwargs):
@@ -65,7 +83,7 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
         raise Exception('Independent-sample test input, one-sample expected!')
     def boot_stat(x, **kwargs): # thinly wrap test function
         _, ps, adj_alphas, _ = test_func(x, **kwargs)
-        return np.stack([ps < .05, ps < adj_alphas], axis = 1)
+        return np.stack([ps <= .05, ps <= adj_alphas], axis = 1)
     test_func_kwargs['look_times'] = look_times
     test_func_kwargs['n_max'] = n_max
     rejections = _bootstrap(
@@ -73,4 +91,18 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
         max(look_times), n_simulations,
         conditional, seed, n_jobs, **test_func_kwargs
     )
-    return rejections
+
+    # return simulation results with some metadata for posterity
+    results = {}
+    results['uncorr_instantaneous_power'] = rejections[...,0].mean(0).tolist()
+    results['rejection_probability'] = _prob_rejection(rejections[...,1]).tolist()
+    results['cumulative_power'] = _cumulative_power(rejections[...,1]).tolist()
+    results['uncorr_cumulative_power'] = _cumulative_power(rejections[...,0]).tolist()
+    results['n_expected'] = _expected_sample_size(rejections[...,1], look_times)
+    results['n_max'] = n_max
+    results['look_times'] = look_times
+    results['n_simulations'] = n_simulations
+    results['n_orig_data'] = X.shape[0]
+    results['test'] = str(test_func)
+    results['conditional'] = False
+    return results

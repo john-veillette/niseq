@@ -10,10 +10,10 @@ class SpendingFunction(ABC):
         self.alpha = alpha
         self.max_n = max_n
         # and test that spending function is valid, a.k.a. it . . .
-        assert(self.__call__(0) == 0) # starts at zero
-        assert(self.__call__(max_n) == alpha) # ends at alpha
+        assert(np.isclose(self.__call__(0), 0)) # starts at zero
+        assert(np.isclose(self.__call__(max_n), alpha)) # ends at alpha
         a = [self.__call__(n) for n in range(max_n)]
-        assert(np.all(np.diff(np.array(a)) > 0)) # and monotonically increases
+        assert(np.all(np.diff(np.array(a)) >= 0)) # and monotonically increases
 
     @abstractmethod
     def __call__(self, n):
@@ -46,7 +46,10 @@ class OBrienFlemingSpendingFunction(SpendingFunction):
     def __call__(self, n):
         from scipy.stats import norm
         r = n / self.max_n # information fraction
-        return 2 * (1 - norm.cdf(norm.ppf(1 - self.alpha / 2) / np.sqrt(r)))
+        if n != 0:
+            return 2 * (1 - norm.cdf(norm.ppf(1 - self.alpha / 2) / np.sqrt(r)))
+        else:
+            return 0. # avoid divide by zero
 
 class PiecewiseSpendingFunction(SpendingFunction):
     '''
