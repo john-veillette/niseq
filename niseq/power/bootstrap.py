@@ -1,5 +1,7 @@
+from ..spending_functions import SpendingFunction
 from mne.parallel import parallel_func
 from mne.utils import check_random_state
+from inspect import isclass, isfunction
 import numpy as np
 
 def _boot_sample(x, n_resample, seed):
@@ -99,10 +101,21 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
     results['cumulative_power'] = _cumulative_power(rejections[...,1]).tolist()
     results['uncorr_cumulative_power'] = _cumulative_power(rejections[...,0]).tolist()
     results['n_expected'] = _expected_sample_size(rejections[...,1], look_times)
-    results['n_max'] = n_max
-    results['look_times'] = look_times
     results['n_simulations'] = n_simulations
     results['n_orig_data'] = X.shape[0]
-    results['test'] = str(test_func)
     results['conditional'] = False
+    results['test_func'] = test_func.__name__
+    test_func_kwargs = { # convert functions and classes to strings
+        key: test_func_kwargs[key].__name__
+            if (isfunction(test_func_kwargs[key]) or isclass(test_func_kwargs[key]))
+            else test_func_kwargs[key]
+            for key in test_func_kwargs
+    }
+    test_func_kwargs = { # convert SpendingFunction instances to strings
+        key: test_func_kwargs[key].__class__.__name__
+            if issubclass(type(test_func_kwargs[key]), SpendingFunction)
+            else test_func_kwargs[key]
+            for key in test_func_kwargs
+    }
+    results['test_func_kwargs'] = test_func_kwargs
     return results
