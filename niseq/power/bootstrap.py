@@ -4,6 +4,8 @@ from mne.utils import check_random_state
 from inspect import isclass, isfunction
 import numpy as np
 
+from ..util.docs import fill_doc
+
 def _boot_sample(x, n_resample, seed):
     '''
     performs two-level sampling of
@@ -73,6 +75,7 @@ def _expected_sample_size(rejs, look_times):
     ns = [look_times[i] for i in idxs]
     return np.mean(ns)
 
+@fill_doc
 def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
                 conditional = False, n_simulations = 1024, seed = None,
                 n_jobs = 1, **test_func_kwargs):
@@ -102,12 +105,12 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
 
     Parameters
     -----------
-    X : list of array, shape (n_observations, p[, q][, r])
+    X : array, shape (n_observations, p[, q][, r])
         The data from which to resample. ``X`` should contain the observations
-        for one group or paired differences. The first dimension of each array
-        is the number of observations from that group; remaining dimensions
-        comprise the size of a single observation. See documentation for
-        user-input ``test_func`` for more details.
+        for one group or paired differences. The first dimension of the array
+        is the number of observations; remaining dimensions comprise the size of
+        a single observation. See documentation for user-input ``test_func`` for
+        more details.
     test_func : function
         The one-sample sequential test you want to run a power analysis for.
         Must accept ``look_times`` and ``n_max`` arguments and return results,
