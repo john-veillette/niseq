@@ -19,8 +19,13 @@ n_max : int
     null hypothesis has been rejected.
 '''
 
+docdict['alpha'] = '''
+alpha : float, default: 0.05
+    Desired false positive rate after all looks at the data (i.e. at ``n_max``)
+'''
+
 docdict['spending_func'] = '''
-spending_func : niseq.spending_functions.SpendingFunction, default LinearSpendingFunction
+spending_func : instance of SpendingFunction, default: LinearSpendingFunction
     An initialized instance of one of ``SpendingFunction``'s subclasses. This
     defines a monotonically increasing function such that f(0) = 0 and
     f(n_max) = alpha, determining how Type I error is distributed over
@@ -50,6 +55,22 @@ y : array, shape (n_observations,)
     Value of dependent variable associated with each observation in ``X``.
 '''
 
+docdict['tail'] = '''
+tail : -1 or 0 or 1, default: 0
+    If tail is 1, the alternative hypothesis is that the
+    mean of the data is greater than 0 (upper tailed test).  If tail is 0,
+    the alternative hypothesis is that the mean of the data is different
+    than 0 (two tailed test).  If tail is -1, the alternative hypothesis
+    is that the mean of the data is less than 0 (lower tailed test).
+'''
+
+docdict['stat_fun_corr'] = '''
+stat_fun : callable() | None, default: None
+    Function called to calculate the test statistic. Must accept 1D-array as
+    input and return a 1D array. If ``None`` (the default), computes Pearson
+    correlation.
+'''
+
 dodict['labels'] = '''
 labels : array, shape (n_observations,)
     Condition label associated with each observation in ``X``.
@@ -57,7 +78,7 @@ labels : array, shape (n_observations,)
 
 # overwrite MNE's documentation to avoid messing with bibtex for now
 docdict['threshold'] = '''
-threshold : float | dict | None
+threshold : float | dict | None, default: None
     The so-called "cluster forming threshold" in the form of a test statistic
     (note: this is not an alpha level / "p-value").
     If numeric, vertices with data values more extreme than ``threshold`` will
@@ -180,8 +201,9 @@ for each look (to which the p-values are compared), and the value of the
 alpha-spending function at each look. See [3] for further recommendations.
 '''
 
-#########################
+##############################################################################
 # Below is copied from pycrostates/utils/_docs.py
+# Defines functions to fill in placeholders in docstrings.
 
 docdict_indented: Dict[int, Dict[str, str]] = {}
 

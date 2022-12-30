@@ -5,6 +5,7 @@ from mne.utils import check_random_state
 from .util import _correlation_stat_fun
 import numpy as np
 
+from .util.docs import fill_doc
 
 def _format_input(X):
     X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
@@ -66,7 +67,7 @@ def _get_max_stat_correlation(X, labels, statfun, tail = 0, **statfun_kwargs):
 
     Returns
     -------
-    r_obs: a (<sample_shape>) np.ndarray containing test statistics
+    r_obs : a (<sample_shape>) np.ndarray containing test statistics
     r_max: the maximum test statistic
     '''
     X = [X, y]
@@ -103,14 +104,45 @@ def _add_pvs_to_obs(obs_stats, H0, tail):
         min_ps.append(np.min(p))
     return formatted_obs, np.array(min_ps)
 
-
+@fill_doc
 def sequential_permutation_t_test_1samp(X,
                                         look_times, n_max,
                                         alpha = .05, tail = 0,
                                         spending_func = None,
                                         **kwargs):
-    '''
-    sequential generalization of mne.stats.permutations.permutation_t_test
+    '''One-sample sequential permutation test with max-type correction.
+
+    This is a sequential generalization of
+    ``mne.stats.permutations.permutation_t_test``. There's also the option to
+    switch out the test statistic instead of using a t statistic.
+
+    Uses max-type correction for multiple comparisons [4].
+
+    %(alpha_spending_explanation)s
+
+    Parameters
+    ----------
+    %(X)s
+    %(look_times)s
+    %(n_max)s
+    %(alpha)s
+    %(tail)s
+    %(spending_func)s
+    %(stat_fun_clust_t)s
+    %(n_jobs)s
+    %(seed)s
+
+    Returns
+    ---------
+    %(returns_maxtype)s
+
+    Notes
+    ---------
+    %(alpha_spending_note)s
+
+    References
+    ----------
+    %(references_maxtype)s
     '''
     assert(isinstance(X, np.ndarray))
     obs, H0 = generate_permutation_dist(
@@ -129,16 +161,46 @@ def sequential_permutation_t_test_1samp(X,
     return obs_stats, ps, adj_alpha, spending
 
 
+@fill_doc
 def sequential_permutation_test_indep(X, labels,
                                         look_times, n_max,
                                         alpha = .05, tail = 0,
                                         spending_func = None,
                                         **kwargs):
-    '''
-    sequential generalization of mne.stats.permutations.permutation_t_test
+    '''Independent-sample sequential permutation test with max-type correction.
 
-    Uses either a t statistic for two groups or a one-way F statistic
-    for multiple groups.
+    By default, this is a sequential generalization of an independent sample
+    max-t procedure if two groups and max-F procedure if more groups. However,
+    there's an option to switch out the test statistic.
+
+    Uses max-type correction for multiple comparisons [4].
+
+    %(alpha_spending_explanation)s
+
+    Parameters
+    ----------
+    %(X)s
+    %(labels)s
+    %(look_times)s
+    %(n_max)s
+    %(alpha)s
+    %(tail)s
+    %(spending_func)s
+    %(stat_fun_clust_f)s
+    %(n_jobs)s
+    %(seed)s
+
+    Returns
+    ---------
+    %(returns_maxtype)s
+
+    Notes
+    ---------
+    %(alpha_spending_note)s
+
+    References
+    ----------
+    %(references_maxtype)s
     '''
     assert(isinstance(X, np.ndarray))
     assert(isinstance(labels, np.ndarray))
@@ -162,13 +224,46 @@ def sequential_permutation_test_indep(X, labels,
     return obs_stats, ps, adj_alpha, spending
 
 
+@fill_doc
 def sequential_permutation_test_corr(X, y,
                                     look_times, n_max,
                                     alpha = .05, tail = 0,
                                     spending_func = None,
                                     **kwargs):
-    '''
-    sequential permutation test with correlation as the univariate test statistic
+    '''A sequential permutation test for correlations with a max-type correction.
+
+    Tests for a relationship between ``X`` and a continuous independent variable
+    ``y``. By default, uses Pearson correlation by default, but the test
+    statistic can be modified.
+
+    Uses max-type correction for multiple comparisons [4].
+
+    %(alpha_spending_explanation)s
+
+    Parameters
+    ----------
+    %(X)s
+    %(y)s
+    %(look_times)s
+    %(n_max)s
+    %(alpha)s
+    %(tail)s
+    %(spending_func)s
+    %(stat_fun_corr)s
+    %(n_jobs)s
+    %(seed)s
+
+    Returns
+    ---------
+    %(returns_maxtype)s
+
+    Notes
+    ---------
+    %(alpha_spending_note)s
+
+    References
+    ----------
+    %(references_maxtype)s
     '''
     assert(isinstance(X, np.ndarray))
     assert(isinstance(y, np.ndarray))
