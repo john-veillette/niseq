@@ -69,7 +69,26 @@ def generate_permutation_dist(X, labels,
                             statistic = _get_cluster_stats_samples,
                             **statistic_kwargs):
     '''
-    computes test statistic and its permutation distribution at each look time
+    This function computes the test statistic and its permutation distribution
+    at each look time. It isn't meant for users to access directly for ordinary
+    use, though it can be used to construct new sequential tests.
+
+    Arguments
+    -----------
+    %(X)s
+    labels : array of shape (n_observations,) | None
+        Either condition labels for each observation in ``X``, a continuous
+        dependent variable to correlate with ``X``, or None. In the latter case,
+        a one-sample (sign flip) permutation scheme will be used, otherwise an
+        independent sample (label shuffle) permutation scheme is used.
+    %(n_permutations_clust_all)s
+    %(seed)s
+    %(n_jobs)s
+    statistic : callable(), default: _get_cluster_stats_samples
+        The test statistic to compute on the data, e.g. a cluster statistic or
+        a max-t statistic.
+    **statistic_kwargs :
+        You may pass arbitrary arguments to the ``statistic`` function.
     '''
     # pick new random seeds to use for each permutation
     rng = check_random_state(seed)
@@ -129,6 +148,27 @@ def find_thresholds(
     Given a permutation null distribution for a corresponding sequence of look
     times and an alpha spending function, computes the adjusted significance
     thresholds requires to control the false positive rate across all looks.
+
+    Arguments
+    ---------
+    H0 : array of shape (n_permutations, n_looks)
+        The joint permutation null distribution of the test statistic across
+        look times.
+    %(look_times)s
+    %(n_max)s
+    %(alpha)s
+    %(tail)s
+    %(spending_func)s
+
+    Returns
+    --------
+    spending : array of shape (n_looks,)
+        The value of the alpha spending function at each sample size
+        in ``look_times``.
+    adj_alphas : array of shape (n_looks,)
+        The adjusted significance threshold against which to compare p-values
+        at each sample size in ``look_times``.
+
     '''
     # check spending function
     if spending_func is None:
