@@ -5,6 +5,8 @@ from mne.parallel import parallel_func
 from collections import OrderedDict
 import numpy as np
 
+from .util.docs import fill_doc
+
 def _get_stat_at_look_times(X, labels, look_times, statistic, statistic_kwargs):
     '''
     computes the test statistic at each look time
@@ -60,7 +62,7 @@ def _get_stat_perm(X, labels, look_times, seed, statistic, statistic_kwargs):
     assert(H0.ndim == 1)
     return H0
 
-
+@fill_doc
 def generate_permutation_dist(X, labels,
                             look_times,
                             n_permutations = 1024,
@@ -139,6 +141,7 @@ def _throw_spending_func_warning():
         '''
     )
 
+@fill_doc
 def find_thresholds(
     H0, look_times, max_n,
     alpha = 0.05, tail = 0,
