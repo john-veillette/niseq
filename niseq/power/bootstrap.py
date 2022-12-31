@@ -42,7 +42,7 @@ def _boot_stat(x, statistic, n_resample, conditional = False, seed = 0, **kwargs
     return statistic(_x, **kwargs)
 
 def _bootstrap(x, statistic, n_resample, n_simulations,
-                conditional = False, seed = 0, n_jobs = 1, **kwargs):
+                conditional = False, seed = 0, n_jobs = None, **kwargs):
     '''
     performs full Bayesian bootstrap, optionally conditioned on current data
     '''
@@ -187,6 +187,10 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
         into the corridor of stability: Practical recommendations to increase
         the informational value of studies.
         Perspectives on psychological science, 9(3), 278-292.
+
+
+
+
 
     '''
     def boot_stat(x, **kwargs): # thinly wrap test function

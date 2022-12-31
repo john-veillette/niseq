@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from ..util.docs import copy_doc
+from .util.docs import copy_doc
 
 class SpendingFunction(ABC):
     '''An abstract base class for spending functions

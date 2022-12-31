@@ -1,4 +1,4 @@
-from mne.util.docs import docdict as docdict_mne
+from mne.utils.docs import docdict as docdict_mne
 from typing import Callable, Dict, List, Tuple
 import sys
 
@@ -50,7 +50,7 @@ X : array, shape (n_observations, p[, q][, r])
     provided as ``(observations, frequencies, channels/vertices))``.
 '''
 
-dodict['y'] = '''
+docdict['y'] = '''
 y : array, shape (n_observations,)
     Value of dependent variable associated with each observation in ``X``.
 '''
@@ -64,6 +64,24 @@ tail : -1 or 0 or 1, default: 0
     is that the mean of the data is less than 0 (lower tailed test).
 '''
 
+docdict['n_permutations'] = '''
+n_permutations : int, default: 1024
+        Number of permutations.
+'''
+
+docdict['stat_fun_t'] = '''
+stat_fun : callable() | None, default: None
+    Function called to calculate the test statistic. Must accept 1D-array as
+    input and return a 1D array. If ``None`` (the default), uses t statistic.
+'''
+
+docdict['stat_fun_F'] = '''
+stat_fun : callable() | None, default: None
+    Function called to calculate the test statistic. Must accept 1D-array as
+    input and return a 1D array. If ``None`` (the default), uses t statistic
+    or F statistic if more than two groups.
+'''
+
 docdict['stat_fun_corr'] = '''
 stat_fun : callable() | None, default: None
     Function called to calculate the test statistic. Must accept 1D-array as
@@ -71,7 +89,7 @@ stat_fun : callable() | None, default: None
     correlation.
 '''
 
-dodict['labels'] = '''
+docdict['labels'] = '''
 labels : array, shape (n_observations,)
     Condition label associated with each observation in ``X``.
 '''

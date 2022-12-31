@@ -41,6 +41,11 @@ def _get_max_stat_samples(X, labels = None,
     -------
     t_obs: a (<sample_shape>) np.ndarray containing test statistics
     t_max: the maximum test statistic
+
+
+
+
+
     '''
     assert(isinstance(X, np.ndarray))
     if statfun is None:
@@ -69,6 +74,11 @@ def _get_max_stat_correlation(X, labels, statfun, tail = 0, **statfun_kwargs):
     -------
     r_obs : a (<sample_shape>) np.ndarray containing test statistics
     r_max: the maximum test statistic
+
+
+
+
+
     '''
     X = [X, y]
     X, sample_shape = _format_input(X)
@@ -128,7 +138,7 @@ def sequential_permutation_t_test_1samp(X,
     %(alpha)s
     %(tail)s
     %(spending_func)s
-    %(n_permutations_clust_all)s
+    %(n_permutations)s
     %(stat_fun_clust_t)s
     %(n_jobs)s
     %(seed)s
@@ -144,6 +154,11 @@ def sequential_permutation_t_test_1samp(X,
     References
     ----------
     %(references_maxtype)s
+
+
+
+
+
     '''
     assert(isinstance(X, np.ndarray))
     obs, H0 = generate_permutation_dist(
@@ -187,7 +202,7 @@ def sequential_permutation_test_indep(X, labels,
     %(alpha)s
     %(tail)s
     %(spending_func)s
-    %(n_permutations_clust_all)s
+    %(n_permutations)s
     %(stat_fun_clust_f)s
     %(n_jobs)s
     %(seed)s
@@ -203,6 +218,11 @@ def sequential_permutation_test_indep(X, labels,
     References
     ----------
     %(references_maxtype)s
+
+
+
+
+
     '''
     assert(isinstance(X, np.ndarray))
     assert(isinstance(labels, np.ndarray))
@@ -251,7 +271,7 @@ def sequential_permutation_test_corr(X, y,
     %(alpha)s
     %(tail)s
     %(spending_func)s
-    %(n_permutations_clust_all)s
+    %(n_permutations)s
     %(stat_fun_corr)s
     %(n_jobs)s
     %(seed)s
@@ -267,6 +287,11 @@ def sequential_permutation_test_corr(X, y,
     References
     ----------
     %(references_maxtype)s
+
+
+
+
+    
     '''
     assert(isinstance(X, np.ndarray))
     assert(isinstance(y, np.ndarray))

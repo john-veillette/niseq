@@ -24,10 +24,10 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
     %(look_times)s
     %(n_max)s
     %(alpha)s
-    %(tail_clust)s
+    %(tail)s
     %(spending_func)s
     %(threshold)s
-    %(n_permutations_clust_all)s
+    %(n_permutations)s
     %(stat_fun_clust_t)s
     %(adjacency_clust_1)s
     %(n_jobs)s
@@ -49,6 +49,10 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
     References
     ----------
     %(references_clust)s
+
+
+
+    
     '''
     assert(isinstance(X, np.ndarray))
     obs, H0 = generate_permutation_dist(X, None, look_times, tail = tail, **kwargs)
@@ -80,8 +84,8 @@ def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
     %(tail_clust)s
     %(spending_func)s
     %(threshold)s
-    %(n_permutations_clust_all)s
-    %(tail_clust)s
+    %(n_permutations)s
+    %(tail)s
     %(stat_fun_clust_f)s
     %(adjacency_clust_1)s
     %(n_jobs)s
@@ -103,6 +107,10 @@ def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
     References
     ----------
     %(references_clust)s
+
+
+
+
     '''
     assert(isinstance(X, np.ndarray))
     assert(isinstance(X, np.ndarray))
@@ -128,7 +136,7 @@ def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
     (as described by [4]) or of TFCE (as described by [6]) for testing a
     relationship between ``X`` and a continuous variable ``y``. Uses Pearson
     correlation by default (or its z-transform if using TFCE), but test
-    statistic can be modified. 
+    statistic can be modified.
 
     %(alpha_spending_explanation)s
 
@@ -139,10 +147,10 @@ def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
     %(look_times)s
     %(n_max)s
     %(alpha)s
-    %(tail_clust)s
+    %(tail)s
     %(spending_func)s
     %(threshold)s
-    %(n_permutations_clust_all)s
+    %(n_permutations)s
     %(tail_clust)s
     %(stat_fun_corr)s
     %(adjacency_clust_1)s
@@ -165,6 +173,10 @@ def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
     References
     ----------
     %(references_clust)s
+
+
+
+
     '''
     assert(isinstance(X, np.ndarray) and isinstance(y, np.ndarray))
     obs, H0 = generate_permutation_dist(

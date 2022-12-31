@@ -67,13 +67,16 @@ def generate_permutation_dist(X, labels,
                             look_times,
                             n_permutations = 1024,
                             seed = None,
-                            n_jobs = 1,
+                            n_jobs = None,
                             statistic = _get_cluster_stats_samples,
                             **statistic_kwargs):
     '''
     This function computes the test statistic and its permutation distribution
     at each look time. It isn't meant for users to access directly for ordinary
-    use, though it can be used to construct new sequential tests.
+    use, though it can be used in combination with ``find_thresholds`` to
+    construct new sequential tests if you're confident you know what you're
+    doing. You'll want to read the source code carefully to make sure your
+    ``statistic`` function is compatible.
 
     Arguments
     -----------
@@ -83,14 +86,29 @@ def generate_permutation_dist(X, labels,
         dependent variable to correlate with ``X``, or None. In the latter case,
         a one-sample (sign flip) permutation scheme will be used, otherwise an
         independent sample (label shuffle) permutation scheme is used.
-    %(n_permutations_clust_all)s
+    %(n_permutations)s
     %(seed)s
     %(n_jobs)s
     statistic : callable(), default: _get_cluster_stats_samples
         The test statistic to compute on the data, e.g. a cluster statistic or
-        a max-t statistic.
+        a max-t statistic. The last value ``statistic`` returns must be the
+        omnibus test statistic (e.g. the max-t or the cluster size), though you
+        can return whatever other stuff you want which will be passed through
+        the ``obs`` dictionary.
     **statistic_kwargs :
         You may pass arbitrary arguments to the ``statistic`` function.
+
+    Returns
+    ----------
+    obs : dict
+        The output of `statistic` indexed by look time in ``look_times``.
+    H0 : array of shape (n_permutations, n_looks)
+        The joint permutation null distribution of the test statistic across
+        look times.
+
+
+
+
     '''
     # pick new random seeds to use for each permutation
     rng = check_random_state(seed)
@@ -152,6 +170,11 @@ def find_thresholds(
     times and an alpha spending function, computes the adjusted significance
     thresholds requires to control the false positive rate across all looks.
 
+    This isn't meant to be accessed directly by users, but it can be used
+    together with ``generate_permutation_dist`` to create new sequential tests
+    if you're confident you know what you're doing.
+
+
     Arguments
     ---------
     H0 : array of shape (n_permutations, n_looks)
@@ -171,6 +194,9 @@ def find_thresholds(
     adj_alphas : array of shape (n_looks,)
         The adjusted significance threshold against which to compare p-values
         at each sample size in ``look_times``.
+
+
+
 
     '''
     # check spending function
