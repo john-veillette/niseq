@@ -123,7 +123,7 @@ docdict['references_clust'] = '''
 .. [1] Gordon Lan, K. K., & DeMets, D. L. (1983).
     Discrete sequential boundaries for clinical trials.
     Biometrika, 70(3), 659-663.
-.. [2] Lakens, D. (2014). Performing high‐powered studies efficiently with
+.. [2] Lakens, D. (2014). Performing high-powered studies efficiently with
     sequential analyses. European Journal of Social Psychology, 44(7), 701-710.
 .. [3] Lakens, D., Pahlke, F., & Wassmer, G. (2021).
     Group Sequential Designs: A Tutorial.
@@ -158,13 +158,13 @@ looks : dict
     Dictionary containing results of each look at the data, indexed by the
     values provided in ``look_times``. Each entry of the dictionary contains:
 
-    obs : array, shape (p[, q][, r])
+    ``obs`` : array, shape (p[, q][, r])
         Statistic observed for all variables.
-    clusters : list
+    ``clusters`` : list
         List type defined by out_type above.
-    cluster_pv : array
+    ``cluster_pv`` : array
         P-value for each cluster.
-    H0 : array, shape (n_permutations,)
+    ``H0`` : array, shape (n_permutations,)
         Max cluster level stats observed under permutation.
 
 ps : array, shape (n_looks,)
@@ -185,11 +185,11 @@ looks : dict
     Dictionary containing results of each look at the data, indexed by the
     values provided in ``look_times``. Each entry of the dictionary contains:
 
-    obs : array of shape (p[, q][, r])
+    ``obs`` : array of shape (p[, q][, r])
         Test statistic observed for all variables.
-    p_values : array of shape (p[, q][, r])
+    ``p_values`` : array of shape (p[, q][, r])
         P-values for all the tests (a.k.a. variables).
-    H0 : array of shape [n_permutations]
+    ``H0`` : array of shape [n_permutations]
         Max test statistics obtained by permutations.
 
 ps : array, shape (n_looks,)

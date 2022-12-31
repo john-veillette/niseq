@@ -78,18 +78,18 @@ class OBrienFlemingSpendingFunction(SpendingFunction):
 class PiecewiseSpendingFunction(SpendingFunction):
     '''A piecewise spending function for adjusting the maximum sample size.
     A piecewise spending function to be used when adjusting your maximum sample
-    size. i.e., the old spending function `old_spending_func` is used up until
-    `break_n`, the intermediate sample size at which you decided to change the
+    size. i.e., the old spending function ``old_spending_func`` is used up until
+    ``break_n``, the intermediate sample size at which you decided to change the
     max sample size. After that, a linear function is used that goes from
-    old_spending_func(break_n) to (new_max_n, alpha).
+    ``old_spending_func(break_n)`` to (``new_max_n``, ``alpha``).
 
     This is useful if, for instance, (1) you accidentally collect more data than
-    your original max_n, requiring you to adjust your spending function, or
+    your original ``max_n``, requiring you to adjust your spending function, or
     (2) if a conditional power analysis encourages you to change your sample
     size to acheive a desired Type II error rate. Also (3) if you can no longer
-    collect your original max_n for practical reasons.
+    collect your original ``max_n`` for practical reasons.
 
-    If max_n is adjusted multiple times, you can create piecewise spending
+    If ``max_n`` is adjusted multiple times, you can create piecewise spending
     functions recursively.
     '''
 

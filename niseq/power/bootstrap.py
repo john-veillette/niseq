@@ -140,30 +140,30 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
     res : dict
         A results dictionary with keys:
 
-        uncorr_instantaneous_power : list of float
+        ``'uncorr_instantaneous_power'`` : list of float
             The power of a fixed-sample statistical test performed at each look.
-        rejection_probability : list of float
+        ``'rejection_probability'`` : list of float
             The probability that a sequential test rejects the null hypothesis
             (for the first time) at each look time.
-        cumulative_power : list of float
+        ``'cumulative_power'`` : list of float
             The power of a sequential test to reject the null hypothesis by each
             look time. ``res['cumulative_power'][-1]`` is the power of the full
             sequential procedure.
-        uncorr_cumulative_power : list of float
+        ``'uncorr_cumulative_power'`` : list of float
             Cumulative power if the rejection threshold at each look was not
             corrected using alpha-spending (as it should be).
-        n_expected : float
+        ``'n_expected'`` : float
             The expected sample size for the sequential procedure.
-        n_simulations : int
+        ``'n_simulations'`` : int
             The number of bootstrap resamples used.
-        n_orig_data : int
+        ``'n_orig_data'`` : int
             The sample size of the original data ``X``, i.e. ``X.shape[0]``.
-        conditional : bool
+        ``'conditional'`` : bool
             Whether the power analysis that was run was conditional (``True``)
             or prospective (``False``).
-        test_func : str
+        ``'test_func'`` : str
             Name of the sequential test function used.
-        test_func_kwargs : dict
+        ``'test_func_kwargs'`` : dict
             A record of the arguments passed to the test function, including
             ``look_times`` and ``n_max``.
 
