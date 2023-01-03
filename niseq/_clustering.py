@@ -39,8 +39,6 @@ def _check_fun(X, stat_fun, threshold, tail = 0, kind = 'within'):
             if np.sign(tail) < 0:
                 threshold = -threshold
         stat_fun = ttest_1samp_no_p if stat_fun is None else stat_fun
-        if tail == -1:
-            threshold *= -1
     else:
         assert kind == 'between'
         ppf = stats.f.ppf
@@ -50,12 +48,13 @@ def _check_fun(X, stat_fun, threshold, tail = 0, kind = 'within'):
                      '(or f_oneway), got %s' % (stat_fun,))
             elif tail != 1:
                 warn('Ignoring argument "tail", performing 1-tailed F-test')
+                tail = 1
             p_thresh = 0.05
             dfn = len(X) - 1
             dfd = np.sum([len(x) for x in X]) - len(X)
             threshold = ppf(1. - p_thresh, dfn, dfd)
         stat_fun = f_oneway if stat_fun is None else stat_fun
-    return stat_fun, threshold
+    return stat_fun, threshold, tail
 
 def _get_cluster_stats(X, threshold = None, max_step = 1,
         tail = 0, stat_fun = None, adjacency = None,
@@ -164,11 +163,11 @@ def _get_cluster_stats_samples(X, labels = None, threshold = None, max_step = 1,
     assert(isinstance(X, np.ndarray))
     if labels is None:
         X = [X]
-        stat_fun, threshold = _check_fun(X[0], stat_fun, threshold, tail)
+        stat_fun, threshold, tail = _check_fun(X[0], stat_fun, threshold, tail)
     else:
         conds = np.unique(labels)
         X = [X[labels == cond] for cond in conds]
-        stat_fun, threshold = _check_fun(X, stat_fun, threshold, tail, 'between')
+        stat_fun, threshold, tail = _check_fun(X, stat_fun, threshold, tail, 'between')
 
     # check dimensions for each group in X (a list at this stage).
     X = [x[:, np.newaxis] if x.ndim == 1 else x for x in X]
@@ -197,7 +196,7 @@ def _check_fun_correlation(X, stat_fun, threshold, tail):
             stat_fun = _correlation_stat_fun
             if threshold is None:
                 # default to r value where p < 0.05
-                alpha = .05
+                alpha = .05 / (1 + (tail == 0))
                 dist = beta(n/2 - 1, n/2 - 1, loc = -1, scale = 2)
                 if tail == 0:
                     threshold = -dist.ppf(alpha / 2)
