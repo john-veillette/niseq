@@ -253,7 +253,7 @@ Not to exceed <code class="docutils literal notranslate"><span class="pre">max_n
 <li><p><strong>n_max</strong> (<em>int</em>) – Sample size at which data collection is completed, regardless of whether the
 null hypothesis has been rejected.</p></li>
 <li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>default: 0.05</em>) – Desired false positive rate after all looks at the data (i.e. at <code class="docutils literal notranslate"><span class="pre">n_max</span></code>)</p></li>
-<li><p><strong>tail</strong> (<em>int</em>) – If tail is 1, the alternative hypothesis is that the
+<li><p><strong>tail</strong> (<em>-1</em><em> or </em><em>0</em><em> or </em><em>1</em><em>, </em><em>default: 0</em>) – If tail is 1, the alternative hypothesis is that the
 mean of the data is greater than 0 (upper tailed test).  If tail is 0,
 the alternative hypothesis is that the mean of the data is different
 than 0 (two tailed test).  If tail is -1, the alternative hypothesis
@@ -272,10 +272,11 @@ observations (only valid when using default statistic). If <code class="docutils
 a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> (with keys <code class="docutils literal notranslate"><span class="pre">'start'</span></code> and <code class="docutils literal notranslate"><span class="pre">'step'</span></code>) then threshold-free
 cluster enhancement (TFCE) will be used (see TFCE example and [6]).</p></li>
 <li><p><strong>n_permutations</strong> (<em>int</em><em>, </em><em>default: 1024</em>) – Number of permutations.</p></li>
-<li><p><strong>tail</strong> – If tail is 1, the statistic is thresholded above threshold.
-If tail is -1, the statistic is thresholded below threshold.
-If tail is 0, the statistic is thresholded on both sides of
-the distribution.</p></li>
+<li><p><strong>tail</strong> – If tail is 1, the alternative hypothesis is that the
+correlation is greater than 0 (upper tailed test).  If tail is 0,
+the alternative hypothesis is that the correlation is different
+than 0 (two tailed test).  If tail is -1, the alternative hypothesis
+is that the correlation is less than 0 (lower tailed test).</p></li>
 <li><p><strong>stat_fun</strong> (<em>callable</em><em>(</em><em>) </em><em>| None</em><em>, </em><em>default: None</em>) – Function called to calculate the test statistic. Must accept 1D-array as
 input and return a 1D array. If <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default), computes Pearson
 correlation.</p></li>
@@ -734,10 +735,10 @@ Not to exceed <code class="docutils literal notranslate"><span class="pre">max_n
 null hypothesis has been rejected.</p></li>
 <li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>default: 0.05</em>) – Desired false positive rate after all looks at the data (i.e. at <code class="docutils literal notranslate"><span class="pre">n_max</span></code>)</p></li>
 <li><p><strong>tail</strong> (<em>-1</em><em> or </em><em>0</em><em> or </em><em>1</em><em>, </em><em>default: 0</em>) – If tail is 1, the alternative hypothesis is that the
-mean of the data is greater than 0 (upper tailed test).  If tail is 0,
-the alternative hypothesis is that the mean of the data is different
+correlation is greater than 0 (upper tailed test).  If tail is 0,
+the alternative hypothesis is that the correlation is different
 than 0 (two tailed test).  If tail is -1, the alternative hypothesis
-is that the mean of the data is less than 0 (lower tailed test).</p></li>
+is that the correlation is less than 0 (lower tailed test).</p></li>
 <li><p><strong>spending_func</strong> (<em>instance of SpendingFunction</em><em>, </em><em>default: LinearSpendingFunction</em>) – An initialized instance of one of <code class="docutils literal notranslate"><span class="pre">SpendingFunction</span></code>’s subclasses. This
 defines a monotonically increasing function such that f(0) = 0 and
 f(n_max) = alpha, determining how Type I error is distributed over
