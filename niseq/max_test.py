@@ -275,7 +275,7 @@ def sequential_permutation_test_corr(X, y,
     %(look_times)s
     %(n_max)s
     %(alpha)s
-    %(tail)s
+    %(tail_corr)s
     %(spending_func)s
     %(n_permutations)s
     %(stat_fun_corr)s

@@ -70,6 +70,15 @@ tail : -1 or 0 or 1, default: 0
     is that the mean of the data is less than 0 (lower tailed test).
 '''
 
+docdict['tail_corr'] = '''
+tail : -1 or 0 or 1, default: 0
+    If tail is 1, the alternative hypothesis is that the
+    correlation is greater than 0 (upper tailed test).  If tail is 0,
+    the alternative hypothesis is that the correlation is different
+    than 0 (two tailed test).  If tail is -1, the alternative hypothesis
+    is that the correlation is less than 0 (lower tailed test).
+'''
+
 docdict['n_permutations'] = '''
 n_permutations : int, default: 1024
         Number of permutations.

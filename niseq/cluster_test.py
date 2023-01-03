@@ -154,7 +154,7 @@ def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
     %(spending_func)s
     %(threshold)s
     %(n_permutations)s
-    %(tail_clust)s
+    %(tail_corr)s
     %(stat_fun_corr)s
     %(adjacency_clust_1)s
     %(n_jobs)s
