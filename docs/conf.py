@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'niseq'
-copyright = '2022, John Veillette'
+copyright = '2023, John Veillette'
 author = 'John Veillette'
 
 # The full version, including alpha/beta/rc tags

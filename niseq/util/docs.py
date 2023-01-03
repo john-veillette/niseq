@@ -171,7 +171,8 @@ docdict['references_maxtype'] = '''
 docdict['returns_clust'] = '''
 looks : dict
     Dictionary containing results of each look at the data, indexed by the
-    values provided in ``look_times``. Each entry of the dictionary contains:
+    values provided in ``look_times``. Each entry of the dictionary is a tuple
+    that contains:
 
     ``obs`` : array, shape (p[, q][, r])
         Statistic observed for all variables.
@@ -198,7 +199,8 @@ spending: array, shape (n_looks,)
 docdict['returns_maxtype'] = '''
 looks : dict
     Dictionary containing results of each look at the data, indexed by the
-    values provided in ``look_times``. Each entry of the dictionary contains:
+    values provided in ``look_times``. Each entry of the dictionary is a tuple
+    that contains:
 
     ``obs`` : array of shape (p[, q][, r])
         Test statistic observed for all variables.
