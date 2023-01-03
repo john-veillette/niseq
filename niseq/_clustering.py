@@ -39,6 +39,8 @@ def _check_fun(X, stat_fun, threshold, tail = 0, kind = 'within'):
             if np.sign(tail) < 0:
                 threshold = -threshold
         stat_fun = ttest_1samp_no_p if stat_fun is None else stat_fun
+        if tail == -1:
+            threshold *= -1
     else:
         assert kind == 'between'
         ppf = stats.f.ppf

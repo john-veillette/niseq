@@ -8,14 +8,12 @@ def test_fill_doc():
         """My doc.
         Parameters
         ----------
-        %(n_clusters)s
-        %(verbose)s
+        %(n_max)s
         """
         pass
 
-    assert "n_clusters : int" in foo.__doc__
-    assert "verbose : bool" in foo.__doc__
-
+    assert "n_max : int" in foo.__doc__
+    
 
 def test_copy_doc():
     """Test decorator to copy docstring."""

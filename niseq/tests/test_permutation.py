@@ -17,10 +17,12 @@ def fpr_by_simulation(alpha, tail = 0,
         y = rng.choice([0, 1], x.size)
 
         # and compute permutation distribution
+        stat_1samp = lambda _x: np.mean(_x[0])
+        stat_indep = lambda _x, _y: np.mean(_x[0]) - np.mean(_y[0])
         obs, H0 = generate_permutation_dist(
             x, y if indep else None,
             look_times = look_times,
-            statistic = lambda _x: np.mean(_x[0]),
+            statistic = stat_indep if indep else stat_1samp,
             n_permutations = 1000,
             seed = seed
         )
