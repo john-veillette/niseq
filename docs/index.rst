@@ -1,6 +1,8 @@
 Welcome to niseq's documentation!
 =================================
 
+Below is the API documentation for the niseq Python package. Check out our `GitHub repository <https://github.com/john-veillette/niseq>`_ and `example notebooks <https://github.com/john-veillette/niseq/tree/main/examples>`_ for more information.
+
 Indices and tables
 ==================
 
