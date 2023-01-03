@@ -6,12 +6,15 @@
 
 from mne.utils.docs import docdict as docdict_mne
 from typing import Callable, Dict, List, Tuple
+from collections import defaultdict
 import sys
 
 ##############################################################################
 # Define standard documentation entries
 
-docdict = {key: docdict_mne[key] for key in docdict_mne}
+# make defaultdict so that incorrect MNE versions don't cause fatal error in
+# code even if docstrings render incorrectly
+docdict = defaultdict(str, {key: docdict_mne[key] for key in docdict_mne})
 
 docdict['look_times'] = '''
 look_times : list of int
