@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
 from mne.utils.docs import docdict as docdict_mne
 from typing import Callable, Dict, List, Tuple
 import sys

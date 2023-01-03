@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
 from abc import ABC, abstractmethod
 import numpy as np
 

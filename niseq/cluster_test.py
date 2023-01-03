@@ -1,6 +1,9 @@
-################################################################################
-# User-facing wrappers for low.level functions in ._permutation and ._clustering
-################################################################################
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
 from ._permutation import generate_permutation_dist, find_thresholds
 from ._clustering import _get_cluster_stats, _get_cluster_pvs
 from ._permutation import _get_cluster_stats_correlation
@@ -52,7 +55,7 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
 
 
 
-    
+
     '''
     assert(isinstance(X, np.ndarray))
     obs, H0 = generate_permutation_dist(X, None, look_times, tail = tail, **kwargs)

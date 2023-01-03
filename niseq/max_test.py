@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
 from ._permutation import generate_permutation_dist, find_thresholds
 from mne.stats.parametric import f_oneway, ttest_1samp_no_p, ttest_ind_no_p
 from mne.stats.cluster_level import _pval_from_histogram
@@ -291,7 +297,7 @@ def sequential_permutation_test_corr(X, y,
 
 
 
-    
+
     '''
     assert(isinstance(X, np.ndarray))
     assert(isinstance(y, np.ndarray))

@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
 from ._clustering import _get_cluster_stats_samples, _get_cluster_stats_correlation
 from .spending_functions import SpendingFunction, LinearSpendingFunction
 from mne.utils import check_random_state

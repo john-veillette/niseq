@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
 from mne.stats.parametric import f_oneway, ttest_1samp_no_p
 from mne.stats.cluster_level import (
     _permutation_cluster_test,

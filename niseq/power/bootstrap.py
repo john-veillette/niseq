@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+# Authors: John Veillette <johnv@uchicago.edu>
+#
+# License: BSD-3-Clause
+
+
 from ..spending_functions import SpendingFunction
 from mne.parallel import parallel_func
 from mne.utils import check_random_state
