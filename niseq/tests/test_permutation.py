@@ -40,9 +40,8 @@ def one_simulation(seed, tail = 0, sim_type = '1samp',
     # reject if p-val crosses sig threshold at any look time
     return np.array([np.any(p < .05), np.any(p < adj_alpha)])
 
-def fpr_by_simulation(n_simulations, tail = 0, indep = False, n_jobs = -1):
-    parallel, p_func, _ = parallel_func(one_simulation, n_jobs)
-    out = parallel(p_func(seed, tail, indep) for seed in range(n_simulations))
+def fpr_by_simulation(n_simulations, tail, sim_type):
+    out = [one_simulation(seed, tail, sim_type) for seed in range(n_simulations)]
     rejections = np.stack(out)
     fpr = rejections.mean(0)
     return fpr[1] # false positive rate with sequential correction
