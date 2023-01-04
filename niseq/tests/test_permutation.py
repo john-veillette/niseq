@@ -1,16 +1,15 @@
-from matplotlib import pyplot as plt
 from mne.utils import check_random_state
-import numpy as np
 from niseq.max_test import (
     sequential_permutation_t_test_1samp,
     sequential_permutation_test_indep,
     sequential_permutation_test_corr
 )
+import numpy as np
 
 N_SIMULATIONS = 250
 
 def one_simulation(seed, tail = 0, sim_type = '1samp',
-                   look_times = np.linspace(100, 500, 5).astype(int)):
+                   look_times = np.linspace(100, 300, 3).astype(int)):
 
     # generate null data
     rng = check_random_state(seed)
