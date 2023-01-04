@@ -67,7 +67,7 @@ def _get_max_stat_samples(X, labels = None,
     return t_obs.reshape(sample_shape), max_stat
 
 
-def _get_max_stat_correlation(X, labels, statfun, tail = 0, **statfun_kwargs):
+def _get_max_stat_correlation(X, y, statfun, tail = 0, **statfun_kwargs):
     '''
     Inputs
     -------

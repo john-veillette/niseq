@@ -58,7 +58,7 @@ def test_1samp_fpr(alpha = .05, slack = .01):
 def test_indep_fpr(alpha = .05, slack = .01):
     np.random.seed(1)
     for tail in [0, 1, -1]:
-        fpr = fpr_by_simulation(N_SIMULATIONS, tail, indep = 'indep')
+        fpr = fpr_by_simulation(N_SIMULATIONS, tail, sim_type = 'indep')
         assert(fpr <= alpha + slack)
     return None
 
