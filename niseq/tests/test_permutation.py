@@ -1,63 +1,72 @@
-from .._permutation import generate_permutation_dist, find_thresholds
+from matplotlib import pyplot as plt
 from mne.utils import check_random_state
 import numpy as np
+from niseq.max_test import (
+    sequential_permutation_t_test_1samp,
+    sequential_permutation_test_indep,
+    sequential_permutation_test_corr
+)
 
+N_SIMULATIONS = 250
 
-def fpr_by_simulation(alpha, tail = 0,
-    indep = False, n_simulations = 500, seed = 0):
+def one_simulation(seed, tail = 0, sim_type = '1samp',
+                   look_times = np.linspace(100, 500, 5).astype(int)):
 
+    # generate null data
     rng = check_random_state(seed)
-    look_times = np.linspace(20, 100, 5).astype(int)
-    ct = 0 # count number of rejections
+    x = rng.normal(loc = 0, size = look_times[-1])
 
-    for i in range(n_simulations):
-
-        # generate null data
-        x = rng.normal(loc = 0, size = look_times[-1])
-        y = rng.choice([0, 1], x.size)
-
-        # and compute permutation distribution
-        stat_1samp = lambda _x: np.mean(_x[0])
-        stat_indep = lambda _x, _y: np.mean(_x[0]) - np.mean(_y[0])
-        obs, H0 = generate_permutation_dist(
-            x, y if indep else None,
-            look_times = look_times,
-            statistic = stat_indep if indep else stat_1samp,
-            n_permutations = 1000,
+    # run sequential test
+    if sim_type == 'indep':
+        conds = rng.choice([0, 1], look_times[-1])
+        _, p, adj_alpha, _ = sequential_permutation_test_indep(
+            x, conds, look_times, n_max = look_times[-1],
+            tail = tail,
+            seed = seed
+        )
+    elif sim_type == '1samp':
+        _, p, adj_alpha, _ = sequential_permutation_t_test_1samp(
+            x, look_times, n_max = look_times[-1],
+            tail = tail,
+            seed = seed
+        )
+    elif sim_type == 'corr':
+        y = rng.rand(look_times[-1])
+        _, p, adj_alpha, _ = sequential_permutation_test_corr(
+            x, y, look_times, n_max = look_times[-1],
+            tail = tail,
             seed = seed
         )
 
-        # compute p-values for each look time
-        obs_stats = np.array([obs[n] for n in look_times])
-        if tail == 0:
-            p = (np.abs(H0) >= np.abs(obs_stats)).mean(0)
-        elif tail == 1:
-            p = (H0 >= obs_stats).mean()
-        elif tail == -1:
-            p = (H0 <= obs_stats).mean()
+    # reject if p-val crosses sig threshold at any look time
+    return np.array([np.any(p < .05), np.any(p < adj_alpha)])
 
-        # and find the adjusted significance thresholds
-        # for each look
-        spending, adj_alpha = find_thresholds(
-            H0, look_times,
-            look_times[-1],
-            alpha = alpha,
-            tail = tail
-        )
+def fpr_by_simulation(n_simulations, tail = 0, indep = False, n_jobs = -1):
+    parallel, p_func, _ = parallel_func(one_simulation, n_jobs)
+    out = parallel(p_func(seed, tail, indep) for seed in range(n_simulations))
+    rejections = np.stack(out)
+    fpr = rejections.mean(0)
+    return fpr[1] # false positive rate with sequential correction
 
-        # reject if p-val crosses sig threshold at any look time
-        ct += np.any(p < adj_alpha) # and keep count of rejections
 
-    return ct / n_simulations # proportion of simulations where null rejected
 
 def test_1samp_fpr(alpha = .05, slack = .01):
+    np.random.seed(0)
     for tail in [0, 1, -1]:
-        fpr = fpr_by_simulation(alpha, tail = tail)
+        fpr = fpr_by_simulation(N_SIMULATIONS, tail, sim_type = '1samp')
         assert(fpr <= alpha + slack)
     return None
 
 def test_indep_fpr(alpha = .05, slack = .01):
+    np.random.seed(1)
     for tail in [0, 1, -1]:
-        fpr = fpr_by_simulation(alpha, indep = True, tail = tail)
+        fpr = fpr_by_simulation(N_SIMULATIONS, tail, indep = 'indep')
+        assert(fpr <= alpha + slack)
+    return None
+
+def test_corr_fpr(alpha = .05, slack = .01):
+    np.random.seed(1)
+    for tail in [0, 1, -1]:
+        fpr = fpr_by_simulation(N_SIMULATIONS, tail, sim_type = 'corr')
         assert(fpr <= alpha + slack)
     return None
