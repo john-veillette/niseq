@@ -126,6 +126,7 @@ def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
         H0, look_times, n_max,
         alpha, tail, spending_func
         )
+    tail = obs[look_times[0]][-2] # in case tail was overridden
     obs_stats, ps = _get_cluster_pvs(obs, H0, tail = tail)
     return obs_stats, ps, adj_alpha, spending
 

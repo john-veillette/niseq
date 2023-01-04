@@ -176,10 +176,12 @@ def _get_cluster_stats_samples(X, labels = None, threshold = None, max_step = 1,
         if x.shape[1:] != sample_shape:
             raise ValueError('All samples mush have the same size')
 
-    return _get_cluster_stats(X, threshold, max_step,
+    t_obs, clusters, cluster_stats, max_stat = _get_cluster_stats(
+            X, threshold, max_step,
             tail, stat_fun, adjacency,
             exclude , t_power,
             out_type, check_disjoint)
+    return t_obs, clusters, cluster_stats, tail, max_stat
 
 
 def _correlation_stat_fun_tfce(X, y):
@@ -246,7 +248,7 @@ def _get_cluster_pvs(obs_stats, H0, tail):
     obs = OrderedDict()
     min_ps = [] # minimum at each look time
     for i, n in enumerate(obs_stats):
-        t_obs, clusters, cluster_stats, _ = obs_stats[n]
+        t_obs, clusters, cluster_stats = obs_stats[n][:3]
         h0 = H0[:, i]
         if len(clusters) > 0:
             cluster_pv = _pval_from_histogram(cluster_stats, h0, tail)
