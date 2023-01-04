@@ -85,7 +85,7 @@ def _expected_sample_size(rejs, look_times):
 @fill_doc
 def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
                 conditional = False, n_simulations = 1024, seed = None,
-                n_jobs = 1, **test_func_kwargs):
+                n_jobs = None, **test_func_kwargs):
     '''Predictive power analysis via Bayesian bootstrap
 
     Computes the predictive power non-parametrically using the Bayesian
