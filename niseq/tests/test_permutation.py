@@ -1,12 +1,13 @@
 from mne.utils import check_random_state
-from niseq.max_test import (
+from mne.parallel import parallel_func
+from ..max_test import (
     sequential_permutation_t_test_1samp,
     sequential_permutation_test_indep,
     sequential_permutation_test_corr
 )
 import numpy as np
 
-N_SIMULATIONS = 250
+N_SIMULATIONS = 500
 
 def one_simulation(seed, tail = 0, sim_type = '1samp',
                    look_times = np.linspace(100, 300, 3).astype(int)):
@@ -40,31 +41,32 @@ def one_simulation(seed, tail = 0, sim_type = '1samp',
     # reject if p-val crosses sig threshold at any look time
     return np.array([np.any(p < .05), np.any(p < adj_alpha)])
 
-def fpr_by_simulation(n_simulations, tail, sim_type):
-    out = [one_simulation(seed, tail, sim_type) for seed in range(n_simulations)]
+def fpr_by_simulation(n_simulations, tail, sim_type, n_jobs = -1):
+    parallel, p_func, _ = parallel_func(one_simulation, n_jobs)
+    out = parallel(p_func(seed, tail, sim_type) for seed in range(n_simulations))
     rejections = np.stack(out)
     fpr = rejections.mean(0)
     return fpr[1] # false positive rate with sequential correction
 
 
 
-def test_1samp_fpr(alpha = .05, slack = .01):
+def test_1samp_fpr(n_simulations = N_SIMULATIONS, alpha = .05, slack = .01):
     np.random.seed(0)
     for tail in [0, 1, -1]:
-        fpr = fpr_by_simulation(N_SIMULATIONS, tail, sim_type = '1samp')
+        fpr = fpr_by_simulation(n_simulations, tail, sim_type = '1samp')
         assert(fpr <= alpha + slack)
     return None
 
-def test_indep_fpr(alpha = .05, slack = .01):
-    np.random.seed(1)
+def test_indep_fpr(n_simulations = N_SIMULATIONS, alpha = .05, slack = .01):
+    np.random.seed(0)
     for tail in [0, 1, -1]:
         fpr = fpr_by_simulation(N_SIMULATIONS, tail, sim_type = 'indep')
         assert(fpr <= alpha + slack)
     return None
 
-def test_corr_fpr(alpha = .05, slack = .01):
-    np.random.seed(1)
+def test_corr_fpr(n_simulations = N_SIMULATIONS, alpha = .05, slack = .01):
+    np.random.seed(0)
     for tail in [0, 1, -1]:
-        fpr = fpr_by_simulation(N_SIMULATIONS, tail, sim_type = 'corr')
+        fpr = fpr_by_simulation(n_simulations, tail, sim_type = 'corr')
         assert(fpr <= alpha + slack)
     return None
