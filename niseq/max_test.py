@@ -7,7 +7,7 @@
 from ._permutation import generate_permutation_dist, find_thresholds
 from mne.stats.parametric import f_oneway, ttest_1samp_no_p, ttest_ind_no_p
 from mne.stats.cluster_level import _pval_from_histogram
-from mne.utils import check_random_state
+from mne.utils import check_random_state, warn
 from .util import _correlation_stat_fun
 import numpy as np
 
@@ -129,8 +129,7 @@ def sequential_permutation_t_test_1samp(X,
     '''One-sample sequential permutation test with max-type correction.
 
     This is a sequential generalization of
-    ``mne.stats.permutations.permutation_t_test``. There's also the option to
-    switch out the test statistic instead of using a t statistic.
+    ``mne.stats.permutations.permutation_t_test``.
 
     Uses max-type correction for multiple comparisons [4].
 
@@ -145,7 +144,6 @@ def sequential_permutation_t_test_1samp(X,
     %(tail)s
     %(spending_func)s
     %(n_permutations)s
-    %(stat_fun_clust_t)s
     %(n_jobs)s
     %(seed)s
 
@@ -192,8 +190,7 @@ def sequential_permutation_test_indep(X, labels,
     '''Independent-sample sequential permutation test with max-type correction.
 
     By default, this is a sequential generalization of an independent sample
-    max-t procedure if two groups and max-F procedure if more groups. However,
-    there's an option to switch out the test statistic.
+    max-t procedure if two groups and max-F procedure if more groups.
 
     Uses max-type correction for multiple comparisons [4].
 
@@ -209,7 +206,6 @@ def sequential_permutation_test_indep(X, labels,
     %(tail)s
     %(spending_func)s
     %(n_permutations)s
-    %(stat_fun_clust_f)s
     %(n_jobs)s
     %(seed)s
 
@@ -236,6 +232,10 @@ def sequential_permutation_test_indep(X, labels,
         sf = ttest_ind_no_p
     else:
         sf = f_oneway
+        if tail != 1:
+            warn('Ignoring argument "tail", performing 1-tailed F-test')
+            tail = 1
+
     obs, H0 = generate_permutation_dist(
         X, labels,
         look_times,
@@ -278,7 +278,6 @@ def sequential_permutation_test_corr(X, y,
     %(tail_corr)s
     %(spending_func)s
     %(n_permutations)s
-    %(stat_fun_corr)s
     %(n_jobs)s
     %(seed)s
 
