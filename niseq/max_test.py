@@ -22,11 +22,11 @@ def _format_input(X):
 
 def _compute_max_stat(t_obs, tail):
     if tail == 0:
-        max_stat = np.max(np.abs(t_obs))
+        max_stat = np.nanmax(np.abs(t_obs))
     elif tail == 1:
-        max_stat = np.max(t_obs)
+        max_stat = np.nanmax(t_obs)
     elif tail == -1:
-        max_stat = np.min(t_obs)
+        max_stat = np.nanmin(t_obs)
     return max_stat
 
 
@@ -116,8 +116,10 @@ def _add_pvs_to_obs(obs_stats, H0, tail):
         obs = obs_stats[look_time][0]
         h0 = H0[:, i]
         p = _get_pvs_from_histogram(obs, h0, tail)
+        # p should never be zero in a permutation test, so if p == 0, then
+        p[p == 0] = np.nan # stat must have been compared to NaN or Inf
         formatted_obs[look_time] = (obs, p, h0)
-        min_ps.append(np.min(p))
+        min_ps.append(np.nanmin(p))  
     return formatted_obs, np.array(min_ps)
 
 @fill_doc
