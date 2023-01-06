@@ -120,6 +120,10 @@ def generate_permutation_dist(X, labels,
     rng = check_random_state(seed)
     perm_seeds = rng.randint(1, np.iinfo(np.int32).max - 1, n_permutations)
 
+    look_times = sorted(look_times)
+    last_look = look_times[-1]
+    assert(last_look <= X.shape[0])
+
     obs = _get_stat_at_look_times(
         X, labels,
         look_times,
@@ -217,6 +221,11 @@ def find_thresholds(
             alpha = spending_func.alpha
             max_n = spending_func.max_n
             _throw_spending_func_warning()
+
+    look_times = sorted(look_times)
+    last_look = look_times[-1]
+    assert(last_look <= max_n)
+
 
     _H0 = np.copy(H0)
     spending_hist = []
