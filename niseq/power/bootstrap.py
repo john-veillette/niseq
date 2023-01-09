@@ -84,8 +84,8 @@ def _expected_sample_size(rejs, look_times):
 
 @fill_doc
 def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
-                conditional = False, n_simulations = 1024, seed = None,
-                n_jobs = None, **test_func_kwargs):
+                alpha = .05, conditional = False, n_simulations = 1024,
+                seed = None, n_jobs = None, **test_func_kwargs):
     '''Predictive power analysis via Bayesian bootstrap
 
     Computes the predictive power non-parametrically using the Bayesian
@@ -120,12 +120,13 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
         more details.
     test_func : function
         The one-sample sequential test you want to run a power analysis for.
-        Must accept ``look_times`` and ``n_max`` arguments and return results,
-        the middle two of which are the p-values for each look and the adjusted
-        alphas, respectively. This could be any user-facing function from
-        ``niseq`` that ends in ``_1samp``.
+        Must accept ``look_times``, ``n_max``, and ``alpha`` arguments and
+        return results, the middle two of which are the p-values for each look
+        and the adjusted alphas, respectively. This could be any user-facing
+        function from ``niseq`` that ends in ``_1samp``.
     %(look_times)s
     %(n_max)s
+    %(alpha)s
     conditional : bool, default: ``False``
         If ``True``, performs a conditional power analysis; that is, computes
         the probability of a design rejecting the null hypothesis given that the
@@ -202,9 +203,10 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
     '''
     def boot_stat(x, **kwargs): # thinly wrap test function
         _, ps, adj_alphas, _ = test_func(x, **kwargs)
-        return np.stack([ps <= .05, ps <= adj_alphas], axis = 1)
+        return np.stack([ps <= alpha, ps <= adj_alphas], axis = 1)
     test_func_kwargs['look_times'] = look_times
     test_func_kwargs['n_max'] = n_max
+    test_func_kwargs['alpha'] = alpha
     rejections = _bootstrap(
         X, boot_stat,
         max(look_times), n_simulations,
