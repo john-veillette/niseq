@@ -237,18 +237,18 @@ def find_thresholds(
             thres = _quantile(_H0[:, i], 1 - budget, 'higher')
             adjusted_alpha = np.mean(H0[:, i] > thres)
             # If a permutation exceeds threshold at one look time...
-            perm_false_positives = _H0[:, i] >= thres
+            perm_false_positives = _H0[:, i] > thres
             # ... we pass it forward so counted against future looks
             _H0[perm_false_positives, :] = np.inf
         elif tail == -1:
             thres = _quantile(_H0[:, i], budget, 'lower')
             adjusted_alpha = np.mean(H0[:, i] < thres)
-            perm_false_positives = _H0[:, i] <= thres
+            perm_false_positives = _H0[:, i] < thres
             _H0[perm_false_positives, :] = -np.inf
         else:
             thres = _quantile(np.abs(_H0[:, i]),1 - budget, 'higher')
             adjusted_alpha = np.mean(np.abs(H0[:, i]) > thres)
-            perm_false_positives = np.abs(_H0[:, i]) >= thres
+            perm_false_positives = np.abs(_H0[:, i]) > thres
             _H0[perm_false_positives, :] = np.inf
         spending_hist.append(budget)
         adjusted_alphas.append(adjusted_alpha)
