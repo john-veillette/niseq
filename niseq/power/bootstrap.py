@@ -142,7 +142,7 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
     %(seed)s
     %(n_jobs)s
     **test_func_kwargs:
-        You may input any arguments you'd like passed to ``test_func``.
+        You may input any arguments you'd like to be passed to ``test_func``.
 
 
     Returns

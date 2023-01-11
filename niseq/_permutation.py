@@ -96,6 +96,7 @@ def generate_permutation_dist(X, labels,
     %(n_permutations)s
     %(seed)s
     %(n_jobs)s
+    %(verbose)s
     statistic : callable(), default: _get_cluster_stats_samples
         The test statistic to compute on the data, e.g. a cluster statistic or
         a max-t statistic. The last value ``statistic`` returns must be the

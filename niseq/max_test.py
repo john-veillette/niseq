@@ -146,6 +146,7 @@ def sequential_permutation_t_test_1samp(X,
     %(alpha)s
     %(tail)s
     %(spending_func)s
+    %(verbose)s
     %(n_permutations)s
     %(n_jobs)s
     %(seed)s
@@ -210,6 +211,7 @@ def sequential_permutation_test_indep(X, labels,
     %(alpha)s
     %(tail)s
     %(spending_func)s
+    %(verbose)s
     %(n_permutations)s
     %(n_jobs)s
     %(seed)s
@@ -284,6 +286,7 @@ def sequential_permutation_test_corr(X, y,
     %(alpha)s
     %(tail_corr)s
     %(spending_func)s
+    %(verbose)s
     %(n_permutations)s
     %(n_jobs)s
     %(seed)s

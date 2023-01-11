@@ -30,6 +30,7 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
     %(alpha)s
     %(tail)s
     %(spending_func)s
+    %(verbose)s
     %(threshold)s
     %(n_permutations)s
     %(stat_fun_clust_t)s
@@ -93,6 +94,7 @@ def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
     %(alpha)s
     %(tail_clust)s
     %(spending_func)s
+    %(verbose)s
     %(threshold)s
     %(n_permutations)s
     %(tail)s
@@ -162,6 +164,7 @@ def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
     %(alpha)s
     %(tail)s
     %(spending_func)s
+    %(verbose)s
     %(threshold)s
     %(n_permutations)s
     %(tail_corr)s
