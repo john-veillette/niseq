@@ -75,6 +75,7 @@ def generate_permutation_dist(X, labels,
                             seed = None,
                             n_jobs = None,
                             statistic = _get_cluster_stats_samples,
+                            verbose = True,
                             **statistic_kwargs):
     '''
     This function computes the test statistic and its permutation distribution
@@ -134,7 +135,10 @@ def generate_permutation_dist(X, labels,
         obs_stats = [s[-1] for s in obs_stats]
     obs_stats = np.array(obs_stats)
 
-    parallel, p_func, n_jobs = parallel_func(_get_stat_perm, n_jobs)
+    parallel, p_func, n_jobs = parallel_func(
+        _get_stat_perm, n_jobs,
+        verbose = verbose
+    )
     out = parallel(
         p_func(
             X, labels,

@@ -13,7 +13,8 @@ from .util.docs import fill_doc
 
 @fill_doc
 def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
-                                    spending_func = None, **kwargs):
+                                    spending_func = None,
+                                    verbose = True, **kwargs):
     '''A sequential one-sample cluster test.
 
     A sequential generalization of a one-sample cluster-based permutation test
@@ -58,7 +59,12 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
 
     '''
     assert(isinstance(X, np.ndarray))
-    obs, H0 = generate_permutation_dist(X, None, look_times, tail = tail, **kwargs)
+    obs, H0 = generate_permutation_dist(
+        X, None,
+        look_times,
+        tail = tail,
+        verbose = verbose,
+        **kwargs)
     spending, adj_alpha = find_thresholds(
         H0, look_times, n_max,
         alpha, tail, spending_func
@@ -69,7 +75,8 @@ def sequential_cluster_test_1samp(X, look_times, n_max, alpha = .05, tail = 0,
 
 @fill_doc
 def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
-                                tail = 0, spending_func = None, **kwargs):
+                                tail = 0, spending_func = None,
+                                verbose = True, **kwargs):
     '''A sequential independent-sample cluster test.
 
     A sequential generalization of an independet-sample cluster-based
@@ -120,6 +127,7 @@ def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
     obs, H0 = generate_permutation_dist(
         X, labels, look_times,
         tail = tail,
+        verbose = verbose,
         **kwargs
     )
     spending, adj_alpha = find_thresholds(
@@ -133,7 +141,8 @@ def sequential_cluster_test_indep(X, labels, look_times, n_max, alpha = .05,
 
 @fill_doc
 def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
-                                    spending_func = None, **kwargs):
+                                    spending_func = None,
+                                    verbose = True, **kwargs):
     '''A sequential cluster test for correlations.
 
     A sequential generalization of a cluster-based permutation test
@@ -187,6 +196,7 @@ def sequential_cluster_test_corr(X, y, look_times, n_max, alpha = .05, tail = 0,
         X, y, look_times,
         tail = tail,
         statistic = _get_cluster_stats_correlation,
+        verbose = verbose,
         **kwargs
     )
     spending, adj_alpha = find_thresholds(

@@ -119,7 +119,7 @@ def _add_pvs_to_obs(obs_stats, H0, tail):
         # p should never be zero in a permutation test, so if p == 0, then
         p[p == 0] = np.nan # stat must have been compared to NaN or Inf
         formatted_obs[look_time] = (obs, p, h0)
-        min_ps.append(np.nanmin(p))  
+        min_ps.append(np.nanmin(p))
     return formatted_obs, np.array(min_ps)
 
 @fill_doc
@@ -127,6 +127,7 @@ def sequential_permutation_t_test_1samp(X,
                                         look_times, n_max,
                                         alpha = .05, tail = 0,
                                         spending_func = None,
+                                        verbose = True,
                                         **kwargs):
     '''One-sample sequential permutation test with max-type correction.
 
@@ -173,6 +174,7 @@ def sequential_permutation_t_test_1samp(X,
         tail = tail,
         statistic = _get_max_stat_samples,
         statfun = ttest_1samp_no_p,
+        verbose = verbose,
         **kwargs
         )
     spending, adj_alpha = find_thresholds(
@@ -188,6 +190,7 @@ def sequential_permutation_test_indep(X, labels,
                                         look_times, n_max,
                                         alpha = .05, tail = 0,
                                         spending_func = None,
+                                        verbose = True,
                                         **kwargs):
     '''Independent-sample sequential permutation test with max-type correction.
 
@@ -244,6 +247,7 @@ def sequential_permutation_test_indep(X, labels,
         tail = tail,
         statistic = _get_max_stat_samples,
         statfun = sf,
+        verbose = verbose,
         **kwargs
         )
     spending, adj_alpha = find_thresholds(
@@ -259,6 +263,7 @@ def sequential_permutation_test_corr(X, y,
                                     look_times, n_max,
                                     alpha = .05, tail = 0,
                                     spending_func = None,
+                                    verbose = True,
                                     **kwargs):
     '''A sequential permutation test for correlations with a max-type correction.
 
@@ -308,6 +313,7 @@ def sequential_permutation_test_corr(X, y,
         tail = tail,
         statistic = _get_max_stat_correlation,
         statfun = _correlation_stat_fun,
+        verbose = verbose,
         **kwargs
         )
     spending, adj_alpha = find_thresholds(
