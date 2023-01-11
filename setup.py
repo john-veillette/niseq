@@ -3,7 +3,7 @@ import sys
 
 setup(
     name = 'niseq',
-    version = '0.0.1',
+    version = '0.0.2',
     description = 'Group sequential tests for neuroimaging',
     url = 'https://github.com/john-veillette/mne-ari',
     author = 'John Veillette',
