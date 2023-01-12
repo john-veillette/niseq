@@ -5,7 +5,7 @@ setup(
     name = 'niseq',
     version = '0.0.2',
     description = 'Group sequential tests for neuroimaging',
-    url = 'https://github.com/john-veillette/mne-ari',
+    url = 'https://github.com/john-veillette/niseq',
     author = 'John Veillette',
     author_email = 'johnv@uchicago.edu',
     license = 'BSD-3-Clause',
