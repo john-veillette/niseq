@@ -177,12 +177,6 @@ def bootstrap_predictive_power_1samp(X, test_func, look_times, n_max,
             A record of the arguments passed to the test function, including
             ``look_times`` and ``n_max``.
 
-    Notes
-    --------
-    The significance level of the test used is specified in ``test_func``, and
-    thus can be modified by passing an argument to ``test_func`` using
-    ``**test_func_kwargs``.
-
     References
     ---------
     .. [1] Rubin, D. B. (1981). The bayesian bootstrap.
