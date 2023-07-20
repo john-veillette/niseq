@@ -1,7 +1,7 @@
 [![Unit Tests](https://github.com/john-veillette/niseq/actions/workflows/pytest.yml/badge.svg)](https://github.com/john-veillette/niseq/actions/workflows/pytest.yml) [![codecov](https://codecov.io/gh/john-veillette/niseq/branch/main/graph/badge.svg?token=Q88ZWUEO7D)](https://codecov.io/gh/john-veillette/niseq) [![DOI](https://zenodo.org/badge/549239051.svg)](https://zenodo.org/badge/latestdoi/549239051) [![Downloads](https://static.pepy.tech/personalized-badge/niseq?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=PyPI%20downloads)](https://pypi.org/project/niseq/)
 # niseq
 
-__For a full description of the permutation-based approach to sequential hypothesis testing implemented in niseq, check out our new [preprint](https://doi.org/10.1101/2023.02.27.530244)!__ (We also appreciate a citation if you use this package in your research.)
+__For a full description of the permutation-based approach to sequential hypothesis testing implemented in niseq, check out our  [NeuroImage paper](https://doi.org/10.1016/j.neuroimage.2023.120232)!__ (We also appreciate a citation if you use this package in your research.)
 
 `niseq` provides sequential generalizations of common statistical tests used in neuroimaging. That is, you can analyze your data multiple times throughout your experiment and stop data collection when there is enough evidence to reject the null hypothesis [without inflating your false positive rate](https://github.com/john-veillette/niseq/blob/42d77e84195d17aacb56cc7ec63925f7b6e543c7/notebooks/FPR-simulation.ipynb) using an approach called [alpha spending](https://doi.org/10.1002/ejsp.2023).
 
