@@ -17,7 +17,7 @@ jobs:
         python-version: 3.8
     - name: Generate coverage report
       run: |
-        pip install -U https://github.com/mne-tools/mne-python/archive/main.zip
+        pip install mne
         pip install pytest
         pip install pytest-cov
         pytest --cov=./ --cov-report=xml
